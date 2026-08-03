@@ -1,8 +1,8 @@
 .PHONY: all sim wave clean
 
-MODULE = decoder
+MODULE = extend
 RTL = $(wildcard rtl/*.sv)
-TB = tb/tb_decoder.sv
+TB = tb/tb_extend.sv
 
 # ═══════════════════════════════════════
 # Icarus Verilog (Verilog/SV testbench)
