@@ -1,5 +1,5 @@
 $date
-	Fri Jul 31 14:11:08 2026
+	Mon Aug  3 12:37:07 2026
 $end
 $version
 	Icarus Verilog
@@ -8,115 +8,179 @@ $timescale
 	1s
 $end
 $scope module tb $end
-$var wire 1 ! zero $end
-$var wire 32 " result [31:0] $end
-$var reg 32 # a [31:0] $end
-$var reg 4 $ alu_op [3:0] $end
-$var reg 32 % b [31:0] $end
-$var reg 1 & clk $end
+$var wire 1 ! regwrite $end
+$var wire 1 " ResultSrc $end
+$var wire 1 # PCSrc $end
+$var wire 1 $ Memwrite $end
+$var wire 3 % ImmSrc [2:0] $end
+$var wire 1 & ALUSrc $end
+$var wire 3 ' ALUControl [2:0] $end
+$var parameter 7 ( Rtype $end
+$var parameter 7 ) beq $end
+$var parameter 7 * lw $end
+$var parameter 7 + sw $end
+$var reg 1 , clk $end
+$var reg 3 - func3 [2:0] $end
+$var reg 1 . funct7 $end
+$var reg 7 / op [6:0] $end
+$var reg 1 0 zero $end
+$var integer 32 1 fail_count [31:0] $end
+$var integer 32 2 pass_count [31:0] $end
 $scope module uut $end
-$var wire 32 ' a [31:0] $end
-$var wire 4 ( alu_op [3:0] $end
-$var wire 32 ) b [31:0] $end
-$var parameter 4 * ADD $end
-$var parameter 4 + AND $end
-$var parameter 4 , OR $end
-$var parameter 4 - SLL $end
-$var parameter 4 . SLT $end
-$var parameter 4 / SLTU $end
-$var parameter 4 0 SRA $end
-$var parameter 4 1 SRL $end
-$var parameter 4 2 SUB $end
-$var parameter 4 3 XOR $end
-$var reg 32 4 result [31:0] $end
-$var reg 1 ! zero $end
+$var wire 3 3 func3 [2:0] $end
+$var wire 1 . funct7 $end
+$var wire 7 4 op [6:0] $end
+$var wire 1 0 zero $end
+$var parameter 7 5 Rtype $end
+$var parameter 2 6 add $end
+$var parameter 2 7 alu $end
+$var parameter 7 8 beq $end
+$var parameter 7 9 lw $end
+$var parameter 2 : sub $end
+$var parameter 7 ; sw $end
+$var reg 3 < ALUControl [2:0] $end
+$var reg 1 & ALUSrc $end
+$var reg 2 = AluOp [1:0] $end
+$var reg 1 > Branch $end
+$var reg 3 ? ImmSrc [2:0] $end
+$var reg 1 $ Memwrite $end
+$var reg 1 # PCSrc $end
+$var reg 1 " ResultSrc $end
+$var reg 1 ! regwrite $end
+$upscope $end
+$scope task check $end
+$var reg 32 @ actual [31:0] $end
+$var reg 32 A expected [31:0] $end
 $upscope $end
 $upscope $end
 $enddefinitions $end
 $comment Show the parameter values. $end
 $dumpall
-b100 3
-b1 2
-b111 1
-b1000 0
-b1001 /
-b101 .
-b110 -
-b11 ,
-b10 +
-b0 *
+b100011 ;
+b1 :
+b11 9
+b1100011 8
+b10 7
+b0 6
+b110011 5
+b100011 +
+b11 *
+b1100011 )
+b110011 (
 $end
 #0
 $dumpvars
+bx A
+bx @
+b0 ?
+0>
+b0 =
+b0 <
 b0 4
-b0 )
-b0 (
+b0 3
+b0 2
+b0 1
+10
+b0 /
+0.
+b0 -
+x,
 b0 '
-x&
+0&
 b0 %
-b0 $
-b0 #
-b0 "
-1!
+0$
+0#
+0"
+0!
 $end
 #20
-0!
-b1001 "
-b1001 4
-b101 %
-b101 )
-b100 #
-b100 '
-#50
-b11111111111111111111111111111111 "
-b11111111111111111111111111111111 4
-b1 $
-b1 (
-#80
-b10 "
-b10 4
-b10 $
-b10 (
-b10 %
-b10 )
-b1010 #
-b1010 '
-#110
-b1010 "
-b1010 4
-b11 $
-b11 (
-#140
-b1000 "
-b1000 4
-b100 $
-b100 (
-#170
-b1 "
-b1 4
-b101 $
-b101 (
-b11111111111111110001001000110100 #
-b11111111111111110001001000110100 '
-#200
-b11111111111111000100100011010000 "
-b11111111111111000100100011010000 4
-b110 $
-b110 (
-#230
-b111111111111111100010010001101 "
-b111111111111111100010010001101 4
-b111 $
-b111 (
-#260
-b11111111111111111100010010001101 "
-b11111111111111111100010010001101 4
-b1000 $
-b1000 (
-#310
+1"
+1&
 1!
-b0 "
-b0 4
-b1001 $
-b1001 (
-#360
+00
+b11 /
+b11 4
+#40
+b111 2
+b0 A
+b0 @
+#60
+x"
+1$
+b1 %
+b1 ?
+0!
+b100011 /
+b100011 4
+#80
+b0 A
+b0 @
+b1101 2
+#100
+b10 =
+0"
+0$
+0&
+bx %
+bx ?
+1!
+b110011 /
+b110011 4
+#120
+b10011 2
+b0 A
+b0 @
+#140
+b1 '
+b1 <
+1.
+#160
+b11001 2
+b0 A
+b0 @
+#180
+b10 '
+b10 <
+0.
+b111 -
+b111 3
+#200
+b11111 2
+b0 A
+b0 @
+#220
+b11 '
+b11 <
+b110 -
+b110 3
+#240
+b100101 2
+b0 A
+b0 @
+#260
+1#
+b1 '
+b1 <
+b1 =
+1>
+x"
+b10 %
+b10 ?
+0!
+10
+b10 -
+b10 3
+b1100011 /
+b1100011 4
+#280
+b1 A
+b1 @
+b101011 2
+#300
+0#
+00
+#320
+b110001 2
+b0 A
+b0 @
+#340
