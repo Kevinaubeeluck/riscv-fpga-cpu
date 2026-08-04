@@ -2,7 +2,7 @@
 
 MODULE = instr_mem
 RTL = $(wildcard rtl/*.sv)
-TB = tb/tb_instr_mem.sv
+TB = tb/tb_d_mem.sv
 
 # ═══════════════════════════════════════
 # Icarus Verilog (Verilog/SV testbench)

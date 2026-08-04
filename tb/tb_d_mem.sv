@@ -2,14 +2,14 @@ module tb;
     parameter   ADDRESS_WIDTH =32;
     parameter   DATA_WIDTH = 32;
 
-    logic [ADDRESS_WIDTH-1:0] addr; //MAKE SURE THESE AREN'T INPUT/OUTPUT JUST LOGIC 
+    logic [ADDRESS_WIDTH-1:0] addr;
     logic [DATA_WIDTH-1:0] wd;
     logic clk;
     logic we;
     logic [DATA_WIDTH-1:0] rd;
 
 
-    d_mem uut(.*); //ADD MODULE UNDER TEST HERE 
+    d_mem uut(.*);
 
     always #5 clk = ~clk;
 
@@ -29,13 +29,22 @@ module tb;
     initial begin 
         $dumpfile("waves.vcd");
         $dumpvars(0,tb);
-        clk = 0; //ADD INITIALISATION HERE
-
+        clk = 0; 
         
+        /*
+        Read and write test 
+        */
         #20; addr = 32'd30; wd = 32'h112344; we = 1'b1;
         #20;
         check("Write test",   rd,   32'h112344);
-        
+
+        /*
+        We test the validity of the write enable
+        */
+        #20; addr = 32'd30; wd = 32'h555555; we = 1'b0;
+        #20;
+        check("Write test",   rd,   32'h112344);
+
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
 
         $display("End of testing");

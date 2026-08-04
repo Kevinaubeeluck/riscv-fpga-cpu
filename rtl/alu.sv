@@ -5,14 +5,14 @@ module alu (
     output logic        zero       // result == 0 flag
 );
 
-localparam ADD  = 3'b0000;
-localparam SUB  = 3'b0001;
-localparam AND  = 3'b0010;
-localparam OR   = 3'b0011;
-localparam XOR  = 3'b0100;
-localparam SLT  = 3'b0101;
-localparam SLL  = 3'b0110;
-localparam SRL  = 3'b0111;
+localparam ADD  = 3'b000;
+localparam SUB  = 3'b001;
+localparam AND  = 3'b010;
+localparam OR   = 3'b011;
+localparam XOR  = 3'b100;
+localparam SLT  = 3'b101;
+localparam SLL  = 3'b110;
+localparam SRL  = 3'b111;
 // localparam SRA  = 4'b1000;
 // localparam SLTU = 4'b1001;
 
