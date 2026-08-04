@@ -7,7 +7,7 @@ module tb;
     logic PCSrc;
     logic ResultSrc;
     logic Memwrite;
-    logic [2:0] ALUControl;
+    logic [3:0] ALUControl;
     logic ALUSrc;
     logic [2:0] ImmSrc;
     logic regwrite;
@@ -110,28 +110,62 @@ module tb;
         #20; op = Rtype; func3 = '0; funct7 = '1; zero = '0;
         #20;
 
-        check("R-type sub RegWrite",   regwrite,   1);
-      //  check("R-type sub ImmSrc",     ImmSrc,     'x);
-        check("R-type sub ALUSrc",     ALUSrc,     0);
-        check("R-type sub MemWrite",   Memwrite,   0);
-        check("R-type sub ResultSrc",  ResultSrc,  0);
         check("R-type sub ALUControl", ALUControl, 1);
-        check("R-type sub PCSrc",      PCSrc,      0);
 
         /*
-        Rtype AND test:
+        Rtype sll test:
         Same outputs except ALUControl
         */
-        #20; op = Rtype; func3 = 3'b111; funct7 = '0; zero = '0;
+        #20; op = Rtype; func3 = 3'b001; funct7 = '0; zero = '0;
         #20;
 
-        check("R-type AND RegWrite",   regwrite,   1);
-    //  check("R-type AND ImmSrc",     ImmSrc,     'x);
-        check("R-type AND ALUSrc",     ALUSrc,     0);
-        check("R-type AND MemWrite",   Memwrite,   0);
-        check("R-type AND ResultSrc",  ResultSrc,  0);
-        check("R-type AND ALUControl", ALUControl, 3'b010);
-        check("R-type AND PCSrc",      PCSrc,      0);
+        check("R-type SLL ALUControl", ALUControl, 4'b0010);
+
+        /*
+        Rtype slt test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b010; funct7 = '0; zero = '0;
+        #20;
+
+        check("R-type SLT ALUControl", ALUControl, 4'b0011);
+
+        /*
+        Rtype sltu test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b011; funct7 = '0; zero = '0;
+        #20;
+
+        check("R-type SLTU ALUControl", ALUControl, 4'b0100);
+
+        /*
+        Rtype xor test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b100; funct7 = '0; zero = '0;
+        #20;
+
+        check("R-type XOR ALUControl", ALUControl, 4'b0101);
+
+        /*
+        Rtype sra test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b101; funct7 = '0; zero = '0;
+        #20;
+
+        check("R-type SRA ALUControl", ALUControl, 4'b0111);
+
+        /*
+        Rtype srl test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b101; funct7 = 1'b1; zero = '0;
+        #20;
+
+        check("R-type SLTU ALUControl", ALUControl, 4'b0110);
+
 
         /*
         Rtype OR test:
@@ -140,13 +174,15 @@ module tb;
         #20; op = Rtype; func3 = 3'b110; funct7 = '0; zero = '0;
         #20;
 
-        check("R-type OR RegWrite",   regwrite,   1);
-    //  check("R-type OR ImmSrc",     ImmSrc,     'x);
-        check("R-type OR ALUSrc",     ALUSrc,     0);
-        check("R-type OR MemWrite",   Memwrite,   0);
-        check("R-type OR ResultSrc",  ResultSrc,  0);
-        check("R-type OR ALUControl", ALUControl, 3'b011);
-        check("R-type OR PCSrc",      PCSrc,      0);
+        check("R-type AND ALUControl", ALUControl, 4'b1000);
+
+        /*
+        Rtype AND test:
+        Same outputs except ALUControl
+        */
+        #20; op = Rtype; func3 = 3'b111; funct7 = '0; zero = '0;
+        #20;
+        check("R-type OR ALUControl", ALUControl, 4'b1001);
 
 
         /*

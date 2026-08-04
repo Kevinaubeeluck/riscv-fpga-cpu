@@ -6,7 +6,7 @@ module decoder(
     output logic PCSrc,
     output logic ResultSrc,
     output logic Memwrite,
-    output logic [2:0] ALUControl,
+    output logic [3:0] ALUControl,
     output logic ALUSrc,
     output logic [2:0] ImmSrc,
     output logic regwrite
@@ -17,6 +17,19 @@ typedef enum logic[2:0] {
     IMM_S = 3'b001,
     IMM_B = 3'b010
   } imm_src_t;
+
+typedef enum logic [3:0] {
+    ALU_ADD  = 4'b0000,
+    ALU_SUB  = 4'b0001,
+    ALU_SLL  = 4'b0010,
+    ALU_SLT  = 4'b0011,
+    ALU_SLTU = 4'b0100,
+    ALU_XOR  = 4'b0101,
+    ALU_SRL  = 4'b0110,
+    ALU_SRA  = 4'b0111,
+    ALU_OR   = 4'b1000,
+    ALU_AND  = 4'b1001
+} alu_ctrl_t;
 
 localparam lw = 7'b0000011;
 localparam sw = 7'b0100011;
@@ -85,34 +98,58 @@ always_comb begin
 
     case(AluOp)
         add:begin
-            ALUControl = 3'b000;
+            ALUControl = 4'b0000; //add 
         end
         sub:begin
-            ALUControl = 3'b001;
+            ALUControl = 4'b0001; //sub
         end
         alu: begin 
             case(func3)
                 3'b000:begin 
                     case({op[5],funct7})
                         2'b11: begin
-                            ALUControl = 3'b001;
+                            ALUControl = ALU_SUB; //sub
+                        end
+                        2'b10:begin
+                            ALUControl = ALU_ADD; //add
                         end
                         default: begin
-                            ALUControl = 3'b000;
+                            ALUControl = ALU_ADD;// add
                         end
                     endcase
                 end
-                3'b010:begin
-                    ALUControl = 3'b101;
+                3'b001: begin
+                    ALUControl = ALU_SLL;//sll
                 end
+                3'b010:begin
+                    ALUControl = ALU_SLT; //slt 
+                end
+                3'b011: begin
+                    ALUControl = ALU_SLTU; //sltu
+                end
+                3'b100: begin
+                    ALUControl = ALU_XOR; //xor
+                end
+                3'b101:begin
+                    case({op[5],funct7})
+                        2'b11: begin
+                            ALUControl = ALU_SRL; //srl
+                        end
+                        2'b10:begin
+                            ALUControl = ALU_SRA; //sra
+                        end
+                        default: begin
+                            ALUControl = ALU_SRL;// srl
+                        end
+                    endcase                end
                 3'b110:begin
-                    ALUControl = 3'b011;
+                    ALUControl = ALU_OR; //or
                 end
                 3'b111:begin
-                    ALUControl = 3'b010;
+                    ALUControl = ALU_AND;   //and 
                 end
                 default:begin
-                    ALUControl = 3'b000;
+                    ALUControl = ALU_ADD; //add
                 end
             endcase
         end

@@ -1,20 +1,23 @@
 module alu (
     input  logic [31:0] a, b,
-    input  logic [2:0]  alu_op,
+    input  logic [3:0]  alu_op,
     output logic [31:0] result,
     output logic        zero       // result == 0 flag
 );
 
-localparam ADD  = 3'b000;
-localparam SUB  = 3'b001;
-localparam AND  = 3'b010;
-localparam OR   = 3'b011;
-localparam XOR  = 3'b100;
-localparam SLT  = 3'b101;
-localparam SLL  = 3'b110;
-localparam SRL  = 3'b111;
-// localparam SRA  = 4'b1000;
-// localparam SLTU = 4'b1001;
+typedef enum logic [3:0] {
+    ADD  = 4'b0000,
+    SUB  = 4'b0001,
+    SLL  = 4'b0010,
+    SLT  = 4'b0011,
+    SLTU = 4'b0100,
+    XOR  = 4'b0101,
+    SRL  = 4'b0110,
+    SRA  = 4'b0111,
+    OR   = 4'b1000,
+    AND  = 4'b1001
+} alu_ctrl_t;
+
 
 always_comb begin
     case (alu_op)
@@ -41,23 +44,23 @@ always_comb begin
                 result = 32'b0;
             end
         end
-        // SLTU: begin 
-        //     if(a<b)begin
-        //         result = 32'b1;
-        //     end 
-        //     else begin
-        //         result = 32'b0;
-        //     end
-        // end
+        SLTU: begin 
+            if(a<b)begin
+                result = 32'b1;
+            end 
+            else begin
+                result = 32'b0;
+            end
+        end
         SLL: begin 
             result = a<<b[4:0];
         end
         SRL: begin 
             result = a>>b[4:0];
         end
-        // SRA: begin 
-        //     result = $signed(a)>>>$signed(b[4:0]);
-        // end
+        SRA: begin 
+            result = $signed(a)>>>$signed(b[4:0]);
+        end
         default: result = a;
     endcase
     zero = (result == '0);
