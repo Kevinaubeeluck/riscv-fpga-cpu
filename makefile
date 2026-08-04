@@ -1,8 +1,8 @@
 .PHONY: all sim wave clean
 
-MODULE = extend
+MODULE = instr_mem
 RTL = $(wildcard rtl/*.sv)
-TB = tb/tb_extend.sv
+TB = tb/tb_instr_mem.sv
 
 # ═══════════════════════════════════════
 # Icarus Verilog (Verilog/SV testbench)
