@@ -11,6 +11,7 @@ module tb;
     logic ALUSrc;
     logic [2:0] ImmSrc;
     logic regwrite;
+    logic AuiPcSel;
 
 
     decoder uut(.*);
@@ -21,7 +22,8 @@ module tb;
     localparam sw = 7'b0100011;
     localparam Rtype = 7'b0110011;
     localparam tree = 7'b1100011; //again calling tree instead of branch for consistency with decoder
-    localparam Utype = 7'b0110111;
+    localparam Lui = 7'b0110111;
+    localparam auipc = 7'b0010111;
 
     int pass_count = 0;
     int fail_count = 0;
@@ -186,7 +188,7 @@ module tb;
         check("R-type OR ALUControl", ALUControl, 4'b1001);
 
         /*
-        UTYPE test:
+        LUI test:
         Regwrite : 1 because we write to registers
         ImmSrc: 4 - U type
         ALUSrc: 0 - Our ALU input is from an immediate
@@ -196,16 +198,39 @@ module tb;
         PCSrc : 0 - we're not branching
         */
 
-        #20; op = Utype; func3 = 3'b000; funct7 = '0; zero = 1'b1;
+        #20; op =Lui; func3 = 3'b000; funct7 = '0; zero = 1'b1;
         #20;
 
-        check("Utype RegWrite",   regwrite,   1);
-        check("Utype ImmSrc",     ImmSrc,     4);
-        check("Utype ALUSrc",     ALUSrc,     1);
-        check("Utype MemWrite",   Memwrite,   0);
-        check("Utype ResultSrc",  ResultSrc,  2);
-    //    check("Utype ALUControl", ALUControl, 1);
-        check("Utype PCSrc",      PCSrc,      0);
+        check("Lui RegWrite",   regwrite,   1);
+        check("Lui ImmSrc",     ImmSrc,     4);
+        check("Lui ALUSrc",     ALUSrc,     1);
+        check("Lui MemWrite",   Memwrite,   0);
+        check("Lui ResultSrc",  ResultSrc,  2);
+    //  check("Lui ALUControl", ALUControl, 1);
+        check("Lui PCSrc",      PCSrc,      0);
+
+        /*
+        AUIPC test:
+        Regwrite : 1 because we write to registers
+        ImmSrc: 4 - U type
+        ALUSrc: 'x we bypass the ALU
+        Memwrite: 0 - We don't write any output to memory
+        ResultSrc: 'x we bypass results
+        ALUControl : 'x we bypass the ALU hence we dont care
+        PCSrc : 0 - we're not branching
+        */
+
+        #20; op =auipc; func3 = 3'b000; funct7 = '0; zero = 1'b1;
+        #20;
+
+        check("Auipc RegWrite",   regwrite,   1);
+        check("Auipc ImmSrc",     ImmSrc,     4);
+        // check("Auipc ALUSrc",     ALUSrc,     1);
+        check("Auipc MemWrite",   Memwrite,   0);
+        // check("Auipc ResultSrc",  ResultSrc,  2);
+    //  check("Auipc ALUControl", ALUControl, 1);
+        check("Auipc PCSrc",      PCSrc,      0);
+
         /*
         Branch BEQ test:
         Regwrite : 0 - There is no destination register

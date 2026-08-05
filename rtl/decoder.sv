@@ -9,7 +9,8 @@ module decoder(
     output logic [3:0]      ALUControl,
     output logic            ALUSrc,
     output logic [2:0]      ImmSrc,
-    output logic            regwrite
+    output logic            regwrite,
+    output logic            AuiPcSel
 );
 
 /*
@@ -43,7 +44,8 @@ typedef enum logic [6:0] {
     SW = 7'b0100011,
     RTYPE = 7'b0110011,
     BTYPE = 7'b1100011,
-    UTYPE = 7'b0110111,
+    LUI = 7'b0110111,
+    AUIPC = 7'b0010111,
     ITYPE = 7'b0010011
 } opcodes;
 
@@ -62,7 +64,10 @@ logic Zero_temp;
 
 logic eq_check;
 
+
+
 always_comb begin
+    AuiPcSel = 1'b0;
     case(op)
         LW: begin
             regwrite    = 1'b1;
@@ -104,7 +109,7 @@ always_comb begin
             AluOp       = rtype;
         end
 
-        UTYPE: begin
+        LUI: begin
             regwrite    = 1'b1;
             ImmSrc      = IMM_U; 
             ALUSrc      = 1'b1;
@@ -112,6 +117,19 @@ always_comb begin
             ResultSrc   = 2'b10; 
             Branch      = 1'b0;
             AluOp       = 'x;
+        end
+
+
+
+        AUIPC: begin
+            regwrite    = 1'b1;
+            ImmSrc      = IMM_U; 
+            ALUSrc      = 'x;
+            Memwrite    = 1'b0;
+            ResultSrc   = 'x; 
+            Branch      = 1'b0;
+            AluOp       = 'x;
+            AuiPcSel    = 1'b1;
         end
 
         BTYPE: begin

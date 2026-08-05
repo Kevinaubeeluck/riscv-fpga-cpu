@@ -25,6 +25,9 @@ logic [31:0] PCTarget;
 logic [31:0] Result;
 logic        Zero;
 logic [31:0] ALUResult;
+logic        AuiPcSel;
+logic        RegWriteWire;
+
 
 
 always_ff @(posedge clk) begin
@@ -44,6 +47,7 @@ Adding the muxes and adders
 always_comb begin
     SrcB = ALUSrc ? (ImmExt):(WriteData);
     Result = ResultSrc ? (ReadData):(ALUResult);
+    RegWriteWire = AuiPcSel ? (PCTarget):(Result);
     case(ResultSrc)
         00:begin
             Result = ALUResult;
@@ -95,7 +99,8 @@ decoder decoder (
     .ALUControl(ALUControl),
     .ALUSrc(ALUSrc),
     .ImmSrc(ImmSrc),
-    .regwrite(RegWrite)
+    .regwrite(RegWrite),
+    .AuiPcSel(AuiPcSel)
 );
 
 extend extend (
