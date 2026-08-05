@@ -13,7 +13,7 @@ logic [2:0]  ImmSrc;
 logic        ALUSrc;
 logic [3:0]  ALUControl;
 logic        Memwrite;
-logic        ResultSrc;
+logic [1:0]  ResultSrc;
 logic        PCSrc;
 logic [31:0] PCPlus4;
 logic [31:0] SrcA;
@@ -23,7 +23,7 @@ logic [31:0] WriteData;
 logic [31:0] ImmExt;
 logic [31:0] PCTarget;
 logic [31:0] Result;
-logic  Zero;
+logic        Zero;
 logic [31:0] ALUResult;
 
 
@@ -44,6 +44,17 @@ Adding the muxes and adders
 always_comb begin
     SrcB = ALUSrc ? (ImmExt):(WriteData);
     Result = ResultSrc ? (ReadData):(ALUResult);
+    case(ResultSrc)
+        00:begin
+            Result = ALUResult;
+        end
+        01:begin
+            Result = ReadData;
+        end
+        10:begin
+            Result = ImmExt;
+        end
+    endcase
     PcNext = PCSrc ? (PCTarget):(PCPlus4);
     PCTarget = Pc + ImmExt;
     PCPlus4 = Pc + 4;

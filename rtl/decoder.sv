@@ -1,15 +1,15 @@
 module decoder(
-    input logic [6:0] op,
-    input logic [2:0] func3,
-    input logic funct7,
-    input logic zero, 
-    output logic PCSrc,
-    output logic ResultSrc,
-    output logic Memwrite,
-    output logic [3:0] ALUControl,
-    output logic ALUSrc,
-    output logic [2:0] ImmSrc,
-    output logic regwrite
+    input logic [6:0]       op,
+    input logic [2:0]       func3,
+    input logic             funct7,
+    input logic             zero, 
+    output logic            PCSrc,
+    output logic [1:0]      ResultSrc,
+    output logic            Memwrite,
+    output logic [3:0]      ALUControl,
+    output logic            ALUSrc,
+    output logic [2:0]      ImmSrc,
+    output logic            regwrite
 );
 
 /*
@@ -42,7 +42,8 @@ typedef enum logic [6:0] {
     LW = 7'b0000011,
     SW = 7'b0100011,
     RTYPE = 7'b0110011,
-    BEQ = 7'b1100011,
+    BTYPE = 7'b1100011,
+    UTYPE = 7'b0110111,
     ITYPE = 7'b0010011
 } opcodes;
 
@@ -68,7 +69,7 @@ always_comb begin
             ImmSrc      = IMM_I;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 1'b1;
+            ResultSrc   = 2'b1;
             Branch      = 1'b0;
             AluOp       = offset;
         end
@@ -88,22 +89,32 @@ always_comb begin
             ImmSrc      = 'x; //don't care
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
-            ResultSrc   = 1'b0; 
+            ResultSrc   = 2'b0; 
             Branch      = 1'b0;
             AluOp       = rtype;
         end
 
         ITYPE: begin
             regwrite    = 1'b1;
-            ImmSrc      = 1'b1; 
+            ImmSrc      = IMM_I; 
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 1'b0; 
+            ResultSrc   = 2'b0; 
             Branch      = 1'b0;
             AluOp       = rtype;
         end
 
-        BEQ: begin
+        UTYPE: begin
+            regwrite    = 1'b1;
+            ImmSrc      = IMM_U; 
+            ALUSrc      = 1'b1;
+            Memwrite    = 1'b0;
+            ResultSrc   = 2'b10; 
+            Branch      = 1'b0;
+            AluOp       = 'x;
+        end
+
+        BTYPE: begin
             regwrite    = 1'b0;
             ImmSrc      = IMM_B; 
             ALUSrc      = 1'b0;
@@ -117,7 +128,7 @@ always_comb begin
             ImmSrc      = 2'b0; 
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
-            ResultSrc   = 1'b0; 
+            ResultSrc   = 2'b0; 
             Branch      = 1'b0;
             AluOp       = 2'b0;
         end

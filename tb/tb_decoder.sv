@@ -5,7 +5,7 @@ module tb;
     logic zero; 
     logic clk;
     logic PCSrc;
-    logic ResultSrc;
+    logic [1:0] ResultSrc;
     logic Memwrite;
     logic [3:0] ALUControl;
     logic ALUSrc;
@@ -21,6 +21,7 @@ module tb;
     localparam sw = 7'b0100011;
     localparam Rtype = 7'b0110011;
     localparam tree = 7'b1100011; //again calling tree instead of branch for consistency with decoder
+    localparam Utype = 7'b0110111;
 
     int pass_count = 0;
     int fail_count = 0;
@@ -184,13 +185,33 @@ module tb;
         #20;
         check("R-type OR ALUControl", ALUControl, 4'b1001);
 
+        /*
+        UTYPE test:
+        Regwrite : 1 because we write to registers
+        ImmSrc: 4 - U type
+        ALUSrc: 0 - Our ALU input is from an immediate
+        Memwrite: 0 - We don't write any output to memory
+        ResultSrc: 2 - Selects our immediate
+        ALUControl : 'x we bypass the ALU hence we dont care
+        PCSrc : 0 - we're not branching
+        */
 
+        #20; op = Utype; func3 = 3'b000; funct7 = '0; zero = 1'b1;
+        #20;
+
+        check("Utype RegWrite",   regwrite,   1);
+        check("Utype ImmSrc",     ImmSrc,     4);
+        check("Utype ALUSrc",     ALUSrc,     1);
+        check("Utype MemWrite",   Memwrite,   0);
+        check("Utype ResultSrc",  ResultSrc,  2);
+    //    check("Utype ALUControl", ALUControl, 1);
+        check("Utype PCSrc",      PCSrc,      0);
         /*
         Branch BEQ test:
         Regwrite : 0 - There is no destination register
         ImmSrc: 2 - BEQ is B type
         ALUSrc: 0 - Our ALU input is from the regfile not the imm
-        Memwrite: x - Due to being a branch, we don't write any output to memory
+        Memwrite: 0 - Due to being a branch, we don't write any output to memory
         ResultSrc: 0 - We don't want to accidentally write garbage
         ALUControl : 5 - we check for equality through an AND condition
         PCSrc : 1 - we're branching hence PCSrc is 1
