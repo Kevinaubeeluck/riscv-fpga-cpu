@@ -1,4 +1,4 @@
-xmodule tb;
+module tb;
     logic        clk,we;         
     logic [4:0]  ra1,ra2,wa;
     logic [31:0] wd;
@@ -51,6 +51,10 @@ xmodule tb;
         #10; ra2 = 3; #20;
         check("Dual read", rd1, 32'hDEADBEEF);
         check("Dual read", rd2, 32'h01234567);
+
+        $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
+
+        $display("End of testing");
 
         #20; $finish;
     end
