@@ -13,10 +13,11 @@ module decoder(
 );
 
 typedef enum logic[2:0] {
-    IMM_I = 3'b000,
-    IMM_S = 3'b001,
-    IMM_B = 3'b010
-  } imm_src_t;
+    IMM_I = 3'b001,
+    IMM_S = 3'b010,
+    IMM_B = 3'b011,
+    IMM_U = 3'b100
+} imm_src_t;
 
 typedef enum logic [3:0] {
     ALU_ADD  = 4'b0000,
@@ -31,14 +32,21 @@ typedef enum logic [3:0] {
     ALU_AND  = 4'b1001
 } alu_ctrl_t;
 
-localparam lw = 7'b0000011;
-localparam sw = 7'b0100011;
-localparam Rtype = 7'b0110011;
-localparam beq = 7'b1100011;
 
-localparam add = 2'b00;
-localparam sub = 2'b01;
-localparam alu = 2'b10;
+typedef enum logic [6:0] { 
+    LW = 7'b0000011,
+    SW = 7'b0100011,
+    RTYPE = 7'b0110011,
+    BEQ = 7'b1100011,
+    ITYPE = 7'b0010011
+} opcodes;
+
+typedef enum logic[2:0]{
+    offset = 3'b00,
+    sub = 3'b01,
+    rtype = 3'b10,
+    jump = 3'b11
+}alu_op_cases;
 
 logic [1:0] AluOp;
 
@@ -46,44 +54,54 @@ logic Branch;
 
 always_comb begin
     case(op)
-        lw: begin
+        LW: begin
             regwrite    = 1'b1;
             ImmSrc      = IMM_I;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
             ResultSrc   = 1'b1;
             Branch      = 1'b0;
-            AluOp       = add;
+            AluOp       = offset;
         end
 
-        sw: begin
+        SW: begin
             regwrite    = 1'b0;
             ImmSrc      = IMM_S;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b1;
             ResultSrc   = 'x; //don't care
             Branch      = 1'b0;
-            AluOp       = add;
+            AluOp       = offset;
         end
 
-        Rtype: begin
+        RTYPE: begin
             regwrite    = 1'b1;
             ImmSrc      = 'x; //don't care
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
             ResultSrc   = 1'b0; 
             Branch      = 1'b0;
-            AluOp       = alu;
+            AluOp       = rtype;
         end
 
-        beq: begin
+        ITYPE: begin
+            regwrite    = 1'b1;
+            ImmSrc      = 1'b1; 
+            ALUSrc      = 1'b1;
+            Memwrite    = 1'b0;
+            ResultSrc   = 1'b0; 
+            Branch      = 1'b0;
+            AluOp       = rtype;
+        end
+
+        BEQ: begin
             regwrite    = 1'b0;
             ImmSrc      = IMM_B; 
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
             ResultSrc   = 'x; //don't care
             Branch      = 1'b1;
-            AluOp       = sub;
+            AluOp       = jump;
         end
         default:begin
             regwrite    = 1'b0;
@@ -97,13 +115,13 @@ always_comb begin
     endcase
 
     case(AluOp)
-        add:begin
+        offset:begin
             ALUControl = 4'b0000; //add 
         end
-        sub:begin
+        jump:begin
             ALUControl = 4'b0001; //sub
         end
-        alu: begin 
+        rtype: begin 
             case(func3)
                 3'b000:begin 
                     case({op[5],funct7})

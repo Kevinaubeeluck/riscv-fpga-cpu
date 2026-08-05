@@ -61,7 +61,7 @@ module tb;
         Our 25 bit input is 25'b0001001111111111111100011 or 25'h27FFE3
         Our immediate should extend to just 32'h123
         */
-        #20; imm = 25'h27FFE3; immsrc = TYPE_S;
+        #20; imm = 25'h4344; immsrc = TYPE_S;
         #20;
         check("S(no extension) test", immext, 32'h123);
         /*

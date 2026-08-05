@@ -1,5 +1,6 @@
 module tb;
     logic clk;
+    logic rst;
 
     cpu_top uut(.*); //ADD MODULE UNDER TEST HERE 
 
@@ -21,9 +22,11 @@ module tb;
     initial begin 
         $dumpfile("waves.vcd");
         $dumpvars(0,tb);
-        clk = 0; //ADD INITIALISATION HERE
+        clk = 0; rst = 1; //ADD INITIALISATION HERE
+        #10;
+        rst = 0;
 
-        #20;#20;
+        #200;
         
         $display("\n===== Resu  lts: %0d passed, %0d failed =====", pass_count, fail_count);
 

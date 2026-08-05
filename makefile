@@ -1,6 +1,6 @@
 .PHONY: all sim wave clean
 
-MODULE = instr_mem
+MODULE = cpu_top
 RTL = $(wildcard rtl/*.sv)
 TB = tb/tb_cpu_top.sv
 

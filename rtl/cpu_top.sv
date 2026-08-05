@@ -1,5 +1,6 @@
 module cpu_top(
-    input clk
+    input clk,
+    input rst
 );
     
 
@@ -8,9 +9,9 @@ logic [31:0] Pc;
 logic [31:0] PcNext;
 logic [31:0] Instr;
 logic        RegWrite;
-logic [1:0]  Immsrc;
+logic [2:0]  ImmSrc;
 logic        ALUSrc;
-logic [2:0]  ALUControl;
+logic [3:0]  ALUControl;
 logic        Memwrite;
 logic        ResultSrc;
 logic        PCSrc;
@@ -27,7 +28,13 @@ logic [31:0] ALUResult;
 
 
 always_ff @(posedge clk) begin
-    Pc <= PcNext;
+    if (rst) begin
+        Pc <='0;
+        PcNext <= '0;
+    end
+    else begin
+        Pc <= PcNext;
+    end
 end
 
 
