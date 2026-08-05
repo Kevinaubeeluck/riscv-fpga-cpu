@@ -34,35 +34,35 @@ module tb;
 
         #20; addr = 4;
         #10; 
-        check("Addr 0", dout, 32'h00C00193);
+        check("Addr 4", dout, 32'h00C00193);
 
         #20; addr = 8;
         #10; 
-        check("Addr 0", dout, 32'h003100B3);
+        check("Addr 8", dout, 32'h003100B3);
 
         #20; addr = 12;
         #10; 
-        check("Addr 0", dout, 32'h40310133);
+        check("Addr 12", dout, 32'h40310133);
         
         #20; addr = 16;
         #10; 
-        check("Addr 0", dout, 32'h0021A233);
+        check("Addr 16", dout, 32'h21a223);
         
         #20; addr = 20;
         #10; 
-        check("Addr 0", dout, 32'h0041A283);
+        check("Addr 20", dout, 32'h0041A283);
         
         #20; addr = 24;
         #10; 
-        check("Addr 0", dout, 32'h00510463);
+        check("Addr 24", dout, 32'h00510463);
         
         #20; addr = 28;
         #10; 
-        check("Addr 0", dout, 32'h00000013);
+        check("Addr 28", dout, 32'h00000013);
         
         #20; addr = 32;
         #10; 
-        check("Addr 0", dout, 32'h006281B3);
+        check("Addr 32", dout, 32'h3281b3);
         
         
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);

@@ -12,6 +12,11 @@ module decoder(
     output logic regwrite
 );
 
+/*
+Using enums here makes the code 10 billion percent easier to read
+also remember to never use bare literals
+*/
+
 typedef enum logic[2:0] {
     IMM_I = 3'b001,
     IMM_S = 3'b010,
@@ -45,12 +50,16 @@ typedef enum logic[2:0]{
     offset = 3'b00,
     sub = 3'b01,
     rtype = 3'b10,
-    jump = 3'b11
+    tree = 3'b11 /// We're already using Branch as a wire so calling this state tree is easier to think about
 }alu_op_cases;
 
 logic [1:0] AluOp;
 
 logic Branch;
+
+logic Zero_temp;
+
+logic eq_check;
 
 always_comb begin
     case(op)
@@ -101,7 +110,7 @@ always_comb begin
             Memwrite    = 1'b0;
             ResultSrc   = 'x; //don't care
             Branch      = 1'b1;
-            AluOp       = jump;
+            AluOp       = tree;
         end
         default:begin
             regwrite    = 1'b0;
@@ -116,10 +125,35 @@ always_comb begin
 
     case(AluOp)
         offset:begin
-            ALUControl = 4'b0000; //add 
+            ALUControl = ALU_ADD; //add 
         end
-        jump:begin
-            ALUControl = 4'b0001; //sub
+        tree:begin
+            case(func3)
+                3'b000:begin
+                    ALUControl = ALU_SUB; //beq
+                    eq_check = 1'b1;
+                end
+                3'b001:begin
+                    ALUControl = ALU_SUB; //bne
+                    eq_check = 1'b0;
+                end
+                3'b100:begin
+                    ALUControl = ALU_SLT; //blt
+                    eq_check = 1'b0;
+                end
+                3'b101:begin 
+                    ALUControl = ALU_SLT; //bge
+                    eq_check = 1'b1;
+                end
+                3'b110:begin
+                    ALUControl = ALU_SLTU; //bltu
+                    eq_check = 1'b0;
+                end
+                3'b111:begin
+                    ALUControl = ALU_SLTU; //bgeu  
+                    eq_check = 1'b1;
+                end
+            endcase
         end
         rtype: begin 
             case(func3)
@@ -173,7 +207,14 @@ always_comb begin
         end
     endcase
 
-    PCSrc = Branch & zero;
+    /*
+    Massive note to self here, have to add this multiplexer AFTER assigning 
+    eq_check in my branch func3 checks because always_comb executes 
+    sequentially(may or may have gone insane over this bug)
+    */
+    Zero_temp = (eq_check) ? (zero) : (!zero);
+
+    PCSrc = Branch & Zero_temp;
 end
 
 endmodule

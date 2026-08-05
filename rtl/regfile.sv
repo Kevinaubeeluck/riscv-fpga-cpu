@@ -9,16 +9,27 @@ module regfile (
     logic [31:0] registers [0:31];
 
     always_comb begin
-        if(ra1 =='0) begin
-            rd1 = '0;
-        end
-        else if(ra2 == '0) begin
-            rd2 = '0;
-        end
-        else begin
-            rd1 = registers[ra1];
-            rd2 = registers[ra2];
-        end
+        /*
+        Keeping this logic here as good learning moment, this is bad because
+        in the if and else if case we assign only ONE of the two outputs meaning
+        the other one is inferred and latches at 0
+
+        REMEMBER, EVERY signal must be assigned in EVERY branch of an always_comb block
+        IF signals are independent, don't couple in the same if/else chain 
+        */
+
+        // if(ra1 =='0) begin
+        //     rd1 = '0;
+        // end
+        // else if(ra2 == '0) begin
+        //     rd2 = '0;
+        // end
+        // else begin
+        //     rd1 = registers[ra1];
+        //     rd2 = registers[ra2];
+        // end
+        rd1 = (ra1 == '0) ? ('0):(registers[ra1]);
+        rd2 = (ra2 == '0) ? ('0):(registers[ra2]);
     end
 
     always_ff@(posedge clk)begin

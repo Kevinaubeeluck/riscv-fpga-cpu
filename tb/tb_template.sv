@@ -9,7 +9,7 @@ module tb;
     logic [DATA_WIDTH-1:0] rd;
 
 
-    d_mem uut(.*); //ADD MODULE UNDER TEST HERE 
+    d_mem uut(.*); //ADD MODULE UNDER TEST HERE, if (.*) doesn't work manually instantiate like in tb_regfile.sv
 
     always #5 clk = ~clk;
 

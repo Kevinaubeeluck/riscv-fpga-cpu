@@ -22,7 +22,7 @@ module tb;
     initial begin 
         $dumpfile("waves.vcd");
         $dumpvars(0,tb);
-        clk = 0; rst = 1; //ADD INITIALISATION HERE
+        clk = 0; rst = 1; //ALWAYS remember to reset all clocked logic 
         #10;
         rst = 0;
 

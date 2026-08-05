@@ -22,7 +22,10 @@ always_comb begin
             immext = {{20{imm[31]}},{imm[31:25],imm[11:7]}};
         end 
         TYPE_B:begin
-            immext = {{19{imm[31]}},{imm[31],imm[7],imm[30:25],imm[11:8],1'b0}};
+            immext = {{19{imm[31]}},{imm[31],imm[7],imm[30:25],imm[11:8],1'b0}}; 
+            /*
+            Remember B and J immediates are implicitly zero biased bc of their 2-byte align thingy
+            */
         end
         TYPE_U:begin
             immext = {{12{imm[31]}},{imm[31:12]}};

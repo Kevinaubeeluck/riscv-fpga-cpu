@@ -11,6 +11,10 @@ logic [DATA_WIDTH-1:0] instr_array [10*ADDRESS_WIDTH-1:0];
 initial begin
     $display("Loading instr...");
     $readmemh("rtl/riscv.mem", instr_array);
+    /*
+    Counterintutively, readmemh path is relative to the project route(or if
+    all hope is lost, we use absolute paths)
+    */
 end
 
 always_comb begin

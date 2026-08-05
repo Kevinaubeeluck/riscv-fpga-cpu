@@ -20,7 +20,7 @@ module tb;
     localparam lw = 7'b0000011;
     localparam sw = 7'b0100011;
     localparam Rtype = 7'b0110011;
-    localparam beq = 7'b1100011;
+    localparam tree = 7'b1100011; //again calling tree instead of branch for consistency with decoder
 
     int pass_count = 0;
     int fail_count = 0;
@@ -53,7 +53,7 @@ module tb;
         #20; op = lw; func3 = '0; funct7 = '0; zero = '0;
         #20;
         check("LW RegWrite",   regwrite,   1);
-        check("LW ImmSrc",     ImmSrc,     0);
+        check("LW ImmSrc",     ImmSrc,     1);
         check("LW ALUSrc",     ALUSrc,     1);
         check("LW MemWrite",   Memwrite,   0);
         check("LW ResultSrc",  ResultSrc,  1);
@@ -75,7 +75,7 @@ module tb;
         #20;
 
         check("SW RegWrite",   regwrite,   0);
-        check("SW ImmSrc",     ImmSrc,     1);
+        check("SW ImmSrc",     ImmSrc,     2);
         check("SW ALUSrc",     ALUSrc,     1);
         check("SW MemWrite",   Memwrite,   1);
       //  check("SW ResultSrc",  ResultSrc,  'x);
@@ -186,7 +186,7 @@ module tb;
 
 
         /*
-        BEQ test:
+        Branch BEQ test:
         Regwrite : 0 - There is no destination register
         ImmSrc: 2 - BEQ is B type
         ALUSrc: 0 - Our ALU input is from the regfile not the imm
@@ -195,28 +195,96 @@ module tb;
         ALUControl : 5 - we check for equality through an AND condition
         PCSrc : 1 - we're branching hence PCSrc is 1
         */
-        #20; op = beq; func3 = 3'b010; funct7 = '0; zero = 1;
+        #20; op = tree; func3 = 3'b000; funct7 = '0; zero = 1'b1;
         #20;
 
         check("BEQ TRUE RegWrite",   regwrite,   0);
-        check("BEQ TRUE ImmSrc",     ImmSrc,     2);
+        check("BEQ TRUE ImmSrc",     ImmSrc,     3);
         check("BEQ TRUE ALUSrc",     ALUSrc,     0);
         check("BEQ TRUE MemWrite",   Memwrite,   0);
      // check("BEQ TRUE ResultSrc",  ResultSrc,  'x);
         check("BEQ TRUE ALUControl", ALUControl, 1);
         check("BEQ TRUE PCSrc",      PCSrc,      1);
 
-        //Check to see if we avoid branching when condition false
-        #20; op = beq; func3 = 3'b010; funct7 = '0; zero = 0;
+        /*
+        Branch BEQ false test:
+        Same outputs except PcSrc
+        */        
+        #20; op = tree; func3 = 3'b000; funct7 = '0; zero = 0;
         #20;
 
-        check("BEQ FALSE RegWrite",   regwrite,   0);
-        check("BEQ FALSE ImmSrc",     ImmSrc,     2);
-        check("BEQ FALSE ALUSrc",     ALUSrc,     0);
-        check("BEQ FALSE MemWrite",   Memwrite,   0);
-     // check("BEQ FALSE ResultSrc",  ResultSrc,  'x);
-        check("BEQ FALSE ALUControl", ALUControl, 1);
         check("BEQ FALSE PCSrc",      PCSrc,      0);
+
+        /*
+        Branch BNE true test:
+        */
+        #20; op = tree; func3 = 3'b001; funct7 = '0; zero = '0;
+        #20;
+        check("BNE true PCSrc", PCSrc, 1);
+
+        /*
+        Branch BNE false test:
+        */
+        #20; op = tree; func3 = 3'b001; funct7 = '0; zero = 1'b1;
+        #20;
+        check("BNE false PCSrc", PCSrc, 0);
+
+        /*
+        Branch blt true test:
+        */
+        #20; op = tree; func3 = 3'b010; funct7 = '0; zero = 1'b0;
+        #20;
+        check("BLT true PCSrc", PCSrc, 1);
+
+        /*
+        Branch blt false test:
+        */
+        #20; op = tree; func3 = 3'b010; funct7 = '0; zero = 1'b1;
+        #20;
+        check("BLT false PCSrc", PCSrc, 0);
+
+        /*
+        Branch bge true test:
+        */
+        #20; op = tree; func3 = 3'b101; funct7 = '0; zero = 1'b1;
+        #20;
+        check("BG3 true PCSrc", PCSrc, 1);
+
+        /*
+        Branch bge false test:
+        */
+        #20; op = tree; func3 = 3'b101; funct7 = '0; zero = 1'b0;
+        #20;
+        check("BGE false PCSrc", PCSrc, 0);
+
+
+        /*
+        Branch bltu true test:
+        */
+        #20; op = tree; func3 = 3'b110; funct7 = '0; zero = 1'b0;
+        #20;
+        check("BLTu true PCSrc", PCSrc, 1);
+
+        /*
+        Branch bltu false test:
+        */
+        #20; op = tree; func3 = 3'b110; funct7 = '0; zero = 1'b1;
+        #20;
+        check("BLTu false PCSrc", PCSrc, 0);
+
+        /*
+        Branch bgeu true test:
+        */
+        #20; op = tree; func3 = 3'b111; funct7 = '0; zero = 1'b1;
+        #20;
+        check("BGEU true PCSrc", PCSrc, 1);
+
+        /*
+        Branch bge false test:
+        */
+        #20; op = tree; func3 = 3'b111; funct7 = '0; zero = 1'b0;
+        #20;
+        check("BGEU false PCSrc", PCSrc, 0);
 
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
 

@@ -1,4 +1,4 @@
-module tb;
+xmodule tb;
     logic        clk,we;         
     logic [4:0]  ra1,ra2,wa;
     logic [31:0] wd;
@@ -17,6 +17,17 @@ module tb;
 
     always #5 clk = ~clk;
 
+    int pass_count = 0;
+    int fail_count = 0;
+
+    task check(string name, logic [31:0] actual, logic [31:0] expected);
+    if (actual !== expected) begin
+        $error("%s: expected %0h, got %0h", name, expected, actual);
+        fail_count++;
+    end else
+        pass_count++;
+    endtask
+
     initial begin 
         $dumpfile("waves.vcd");
         $dumpvars(0,tb);
@@ -25,21 +36,21 @@ module tb;
         #20; wa = 5; wd = 32'hDEADBEEF;we = 1;
         #10; we = 0;
 
-        #10; ra1 = 5;
-        #10; $display("rd1 = %h(should be DEADBEEF)",rd1);
-
+        #10; ra1 = 5; #20;
+        check("RD1 read", rd1, 32'hDEADBEEF);
         #20; wa = 0; wd = 32'hDEADBEEF;we = 1;
         #10; we = 0;
 
-        #10; ra2 = 0;
-        #10; $display("ra2(reg %h) = %h(should be 0)",ra2,rd2);
+        #10; ra2 = 0;#20;
+        check("X0 hardwired read", rd2, '0);
 
         
         #20; wa = 3; wd = 32'h01234567;we = 1;
         #10; we = 0;
     
-        #10; ra2 = 3;
-        #10; $display("rd2 = %h(should be 01234567), rd1 = %h(should be DEADBEEF)",rd2,rd1); 
+        #10; ra2 = 3; #20;
+        check("Dual read", rd1, 32'hDEADBEEF);
+        check("Dual read", rd2, 32'h01234567);
 
         #20; $finish;
     end

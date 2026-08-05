@@ -1,2 +1,4 @@
-sim/
+sim/*
+waves.vcdsim/
 waves.vcd
+*.vcd
