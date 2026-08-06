@@ -256,7 +256,7 @@ module tb;
         check("JAL MemWrite",   Memwrite,   0);
         check("JAL ResultSrc",  ResultSrc,  2'b11);
     //  check("JAL ALUControl", ALUControl, 1);
-        check("JAL PCSrc",      PCSrc,      2'b10);
+        check("JAL PCSrc",      PCSrc,      2'b1);
 
         /*
         JALR test:

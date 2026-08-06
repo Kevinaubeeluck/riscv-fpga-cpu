@@ -14,7 +14,7 @@
 67828293    // ADDI x5, x5, 0x678   (x5 = 12345678)
 12345217    // AUIPC x4, 0x12345    (x4 = 12345030)
 40428233    // SUB   x4, x5, x4     (x4 = 648)
-048000ef    // JAL x1, 0x48         (x1= 0x3c)
+010000EF    // JAL x1, 0xC        (x1= 0x3c)
 00000013    // ADDI x0, x0, 0       (NOP — should be skipped)
 00000013    // ADDI x0, x0, 0       (NOP — should be skipped)
 00000013    // ADDI x0, x0, 0       (NOP — should be skipped)

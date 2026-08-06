@@ -140,7 +140,7 @@ always_comb begin
             ALUSrc      = 'x;
             Memwrite    = 1'b0;
             ResultSrc   = 2'b11; 
-            PCSrc       = 2'b10;
+            PCSrc       = 2'b01;
             AluOp       = 'x;  
         end
 

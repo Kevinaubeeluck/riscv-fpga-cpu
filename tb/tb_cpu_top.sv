@@ -21,12 +21,16 @@ module tb;
 
     initial begin 
         $dumpfile("waves.vcd");
+        // Dump all 32 registers individually
+        for (int i = 0; i < 32; i++) begin
+            $dumpvars(0, uut.regfile.registers[i]);
+        end
         $dumpvars(0,tb);
         clk = 0; rst = 1; //ALWAYS remember to reset all clocked logic 
         #10;
         rst = 0;
 
-        #200;
+        #2000;
         
         $display("\n===== Resu  lts: %0d passed, %0d failed =====", pass_count, fail_count);
 

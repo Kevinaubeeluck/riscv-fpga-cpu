@@ -1,0 +1,9 @@
+00100093    // ADDI x1, x0, 1       → x1 = 1 (prev)
+00100113    // ADDI x2, x0, 1       → x2 = 1 (curr)
+00A00293    // ADDI x5, x0, 10      → x5 = 10 (limit)
+00000213    // ADDI x4, x0, 0       → x4 = 0 (counter)
+002081B3    // ADD  x3, x1, x2      → x3 = prev + curr
+00010093    // ADDI x1, x2, 0       → x1 = curr (shift)
+00018113    // ADDI x2, x3, 0       → x2 = next (shift)
+00120213    // ADDI x4, x4, 1       → counter++
+FE5218E3    // BNE  x4, x5, -16     → loop back to ADD if counter != 10
