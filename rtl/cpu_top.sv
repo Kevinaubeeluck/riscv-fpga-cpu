@@ -14,7 +14,7 @@ logic           ALUSrc;
 logic [3:0]     ALUControl;
 logic           Memwrite;
 logic [1:0]     ResultSrc;
-logic           PCSrc;
+logic [1:0]     PCSrc;
 logic [31:0]    PCPlus4;
 logic [31:0]    SrcA;
 logic [31:0]    SrcB;
@@ -45,6 +45,14 @@ end
 Adding the muxes and adders
 */
 always_comb begin
+
+    /*
+    MASSIVE note to self here, i forgot that always_comb is sequential and
+    executes top to bottom leading to me assigning RegDataWire BEFORE i 
+    assign my result and this caused my RegDataWirte to be XXX despite having
+    a valid result. I need to ALWAYS keep in mind that always_comb is sequential
+    and keep dependencies in mind
+    */
     SrcB = ALUSrc ? (ImmExt):(WriteData);
     case(ResultSrc)
         2'b00:begin
@@ -56,9 +64,12 @@ always_comb begin
         2'b10:begin
             Result = ImmExt;
         end
+        2'b11:begin
+            Result = PCPlus4;
+        end
     endcase
 
-        case(RegDataSrc)
+    case(RegDataSrc)
         2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
             RegDataWire = Result;
         end
@@ -66,7 +77,18 @@ always_comb begin
             RegDataWire = PCTarget;
         end
     endcase
-    PcNext = PCSrc ? (PCTarget):(PCPlus4);
+
+    case(PCSrc)
+        2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
+            PcNext = PCPlus4;
+        end
+        2'b01:begin
+            PcNext = PCTarget;
+        end
+        2'b10:begin
+            PcNext = ImmExt;
+        end
+    endcase
     PCTarget = Pc + ImmExt;
     PCPlus4 = Pc + 4;
 end

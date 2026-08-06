@@ -3,7 +3,7 @@ module decoder(
     input logic [2:0]       func3,
     input logic             funct7,
     input logic             zero, 
-    output logic            PCSrc,
+    output logic [1:0]      PCSrc,
     output logic [1:0]      ResultSrc,
     output logic            Memwrite,
     output logic [3:0]      ALUControl,
@@ -22,7 +22,8 @@ typedef enum logic[2:0] {
     IMM_I = 3'b001,
     IMM_S = 3'b010,
     IMM_B = 3'b011,
-    IMM_U = 3'b100
+    IMM_U = 3'b100,
+    IMM_J = 3'b101
 } imm_src_t;
 
 typedef enum logic [3:0] {
@@ -46,7 +47,8 @@ typedef enum logic [6:0] {
     BTYPE = 7'b1100011,
     LUI = 7'b0110111,
     AUIPC = 7'b0010111,
-    ITYPE = 7'b0010011
+    ITYPE = 7'b0010011,
+    JAL = 7'b1101111
 } opcodes;
 
 typedef enum logic[2:0]{
@@ -68,6 +70,8 @@ logic eq_check;
 
 always_comb begin
     RegDataSrc = 'b0;
+    PCSrc = '0;
+
     case(op)
         LW: begin
             regwrite    = 1'b1;
@@ -133,6 +137,16 @@ always_comb begin
             RegDataSrc    = 2'b1;
         end
 
+        JAL:begin
+            regwrite    = 1'b1;
+            ImmSrc      = IMM_J; 
+            ALUSrc      = 'x;
+            Memwrite    = 1'b0;
+            ResultSrc   = 2'b11; 
+            PCSrc       = 2'b10;
+            AluOp       = 'x;  
+        end
+
         BTYPE: begin
             regwrite    = 1'b0;
             ImmSrc      = IMM_B; 
@@ -184,6 +198,8 @@ always_comb begin
                     eq_check = 1'b1;
                 end
             endcase
+            Zero_temp = (eq_check) ? (zero) : (!zero);
+            PCSrc = Branch & Zero_temp;
         end
         rtype: begin 
             case(func3)
@@ -237,14 +253,6 @@ always_comb begin
         end
     endcase
 
-    /*
-    Massive note to self here, have to add this multiplexer AFTER assigning 
-    eq_check in my branch func3 checks because always_comb executes 
-    sequentially(may or may have gone insane over this bug)
-    */
-    Zero_temp = (eq_check) ? (zero) : (!zero);
-
-    PCSrc = Branch & Zero_temp;
 end
 
 endmodule

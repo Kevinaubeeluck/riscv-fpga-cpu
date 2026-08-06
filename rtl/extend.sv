@@ -33,7 +33,6 @@ always_comb begin
         end
         TYPE_J:begin
             immext = {{11{imm[31]}},{imm[31],imm[19:12],imm[20],imm[30:21],1'b0}};
-            immext = immext << 1;
         end
         default:begin
             immext = '0;
