@@ -4,19 +4,23 @@ module tb;
     logic funct7;
     logic zero; 
     logic clk;
-    logic PCSrc;
-    logic [1:0] ResultSrc;
+    logic [1:0] PCSrc;
+    logic [2:0] ResultSrc;
     logic Memwrite;
     logic [3:0] ALUControl;
     logic ALUSrc;
     logic [2:0] ImmSrc;
     logic regwrite;
-    logic AuiPcSel;
 
 
     decoder uut(.*);
 
     always #5 clk = ~clk;
+
+    /*
+    I don't use enums here so i'm forced to recheck my opcodes 
+    so i don't make any off by 1 errors
+    */
 
     localparam lw = 7'b0000011;
     localparam sw = 7'b0100011;
@@ -24,6 +28,8 @@ module tb;
     localparam tree = 7'b1100011; //again calling tree instead of branch for consistency with decoder
     localparam Lui = 7'b0110111;
     localparam auipc = 7'b0010111;
+    localparam jal = 7'b1101111;
+    localparam jalr = 7'b1100111;
 
     int pass_count = 0;
     int fail_count = 0;
@@ -227,9 +233,51 @@ module tb;
         check("Auipc ImmSrc",     ImmSrc,     4);
         // check("Auipc ALUSrc",     ALUSrc,     1);
         check("Auipc MemWrite",   Memwrite,   0);
-        // check("Auipc ResultSrc",  ResultSrc,  2);
+        check("Auipc ResultSrc",  ResultSrc,  3'b100);
     //  check("Auipc ALUControl", ALUControl, 1);
         check("Auipc PCSrc",      PCSrc,      0);
+
+        /*
+        JAL test:
+        Regwrite : 1 because we write to registers
+        ImmSrc: 5 - j type
+        ALUSrc: 'x we bypass the ALU
+        Memwrite: 0 - We don't write any output to memory
+        ResultSrc: 2'b11 we write pc+4
+        ALUControl : 'x we bypass the ALU hence we dont care
+        PCSrc : 2 as we're taking the output from immext
+        */
+        #20; op =jal; func3 = 3'b000; funct7 = '0; zero = 1'b1;
+        #20;
+
+        check("JAL RegWrite",   regwrite,   1);
+        check("JAL ImmSrc",     ImmSrc,     3'b101);
+    //   check("JAL ALUSrc",     ALUSrc,     1);
+        check("JAL MemWrite",   Memwrite,   0);
+        check("JAL ResultSrc",  ResultSrc,  2'b11);
+    //  check("JAL ALUControl", ALUControl, 1);
+        check("JAL PCSrc",      PCSrc,      2'b10);
+
+        /*
+        JALR test:
+        Regwrite : 1 because we write to registers
+        ImmSrc: 1 - i type
+        ALUSrc: 1 because we're adding offset to reg
+        Memwrite: 0 - We don't write any output to memory
+        ResultSrc: 2'b11 we write pc+4
+        ALUControl : 'x we bypass the ALU hence we dont care
+        PCSrc : 3 - we're taking output from ALU
+        */
+        #20; op =jalr; func3 = 3'b000; funct7 = '0; zero = 1'b1;
+        #20;
+
+        check("JALR RegWrite",   regwrite,   1);
+        check("JALR ImmSrc",     ImmSrc,     1);
+    //  check("JALR ALUSrc",     ALUSrc,     1);
+        check("JALR MemWrite",   Memwrite,   0);
+        check("JALR ResultSrc",  ResultSrc,  2'b11);
+        check("JALR ALUControl", ALUControl, 0);
+        check("JALR PCSrc",      PCSrc,      2'b11);
 
         /*
         Branch BEQ test:

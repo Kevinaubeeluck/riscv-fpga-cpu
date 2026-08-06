@@ -125,24 +125,24 @@ module tb;
         imm[20] is 0, imm[10:1] is 011_0100_010, imm[11] is 0,imm[19:12] is 00010010
         We fill the rest of the fields up with 0s
         Our 25 bit input is 25'b0011010001000001001000000 or 25'h688240
-        Our immediate is shifted to 32'b000_0000_0000_0010_0100_0110_1000_1000 or 32'h24688
+        Our immediate is shifted to 32'b0000_0000_0000_0001_0010_0011_0100_0100 or 32'h12344
         */
 
         #20; imm = 25'h688240; immsrc = TYPE_J;
         #20;
-        check("J(extension) test", immext, 32'h24688);
+        check("J(extension) test", immext, 32'h12344);
 
         /*
         Let's use a memorable 21 bit hex like 21'h112344 or 21'b1_0001_0010_0011_0100_0100
         imm[20] is 1, imm[10:1] is 011_0100_010, imm[11] is 0,imm[19:12] is 00010010
         We fill the rest of the fields up with 1s
         Our 25 bit input is 25'b1011010001000001001011111 or 25'h168825F
-        Our immediate is shifted to 32'b1111_1111_1110_0010_0100_0110_1000_1000
+        Our immediate is shifted to 32'b1111_1111_1111_0001_0010_0011_0100_0100
         */
 
         #20; imm = 25'h168825F; immsrc = TYPE_J;
         #20;
-        check("J(extension) test", immext, 32'hFFE24688);
+        check("J(extension) test", immext, 32'hfff12344);
 
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
 
