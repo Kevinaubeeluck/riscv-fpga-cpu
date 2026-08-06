@@ -13,7 +13,7 @@ logic [2:0]     ImmSrc;
 logic           ALUSrc;
 logic [3:0]     ALUControl;
 logic           Memwrite;
-logic [1:0]     ResultSrc;
+logic [2:0]     ResultSrc;
 logic [1:0]     PCSrc;
 logic [31:0]    PCPlus4;
 logic [31:0]    SrcA;
@@ -25,8 +25,6 @@ logic [31:0]    PCTarget;
 logic [31:0]    Result;
 logic           Zero;
 logic [31:0]    ALUResult;
-logic [1:0]     RegDataSrc;
-logic [31:0]    RegDataWire;
 
 
 
@@ -53,30 +51,32 @@ always_comb begin
     a valid result. I need to ALWAYS keep in mind that always_comb is sequential
     and keep dependencies in mind
     */
+    PCTarget = Pc + ImmExt;
+    PCPlus4 = Pc + 4;
     SrcB = ALUSrc ? (ImmExt):(WriteData);
+
+    /*
+    Remember to use larger muxes when possible instead of 
+    many small muxes to reduce amount of wires
+    */
     case(ResultSrc)
-        2'b00:begin
+        3'b000:begin
             Result = ALUResult;
         end
-        2'b01:begin
+        3'b001:begin
             Result = ReadData;
         end
-        2'b10:begin
+        3'b010:begin
             Result = ImmExt;
         end
-        2'b11:begin
+        3'b011:begin
             Result = PCPlus4;
+        end
+        3'b100:begin
+            Result = PCTarget;
         end
     endcase
 
-    case(RegDataSrc) // change this
-        2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
-            RegDataWire = Result;
-        end
-        2'b01:begin
-            RegDataWire = PCTarget;
-        end
-    endcase
 
     case(PCSrc)
         2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
@@ -92,8 +92,7 @@ always_comb begin
             PcNext = ALUResult & ~1;
         end
     endcase
-    PCTarget = Pc + ImmExt;
-    PCPlus4 = Pc + 4;
+
 end
 
 instr_mem instr_mem(
@@ -107,7 +106,7 @@ regfile regfile(
     .ra1(Instr[19:15]),
     .ra2(Instr[24:20]),  
     .wa(Instr[11:7]),        
-    .wd(RegDataWire),       
+    .wd(Result),       
     .rd1(SrcA),
     .rd2(WriteData)   
 );
@@ -131,8 +130,7 @@ decoder decoder (
     .ALUControl(ALUControl),
     .ALUSrc(ALUSrc),
     .ImmSrc(ImmSrc),
-    .regwrite(RegWrite),
-    .RegDataSrc(RegDataSrc)
+    .regwrite(RegWrite)
 );
 
 extend extend (

@@ -4,13 +4,12 @@ module decoder(
     input logic             funct7,
     input logic             zero, 
     output logic [1:0]      PCSrc,
-    output logic [1:0]      ResultSrc,
+    output logic [2:0]      ResultSrc,
     output logic            Memwrite,
     output logic [3:0]      ALUControl,
     output logic            ALUSrc,
     output logic [2:0]      ImmSrc,
-    output logic            regwrite,
-    output logic [1:0]      RegDataSrc
+    output logic            regwrite
 );
 
 /*
@@ -70,7 +69,6 @@ logic eq_check;
 
 
 always_comb begin
-    RegDataSrc = 'b0;
     PCSrc = '0;
 
     case(op)
@@ -122,7 +120,6 @@ always_comb begin
             ResultSrc   = 2'b10; 
             Branch      = 1'b0;
             AluOp       = 'x;
-            RegDataSrc  = 1'b0;
         end
 
 
@@ -132,10 +129,9 @@ always_comb begin
             ImmSrc      = IMM_U; 
             ALUSrc      = 'x;
             Memwrite    = 1'b0;
-            ResultSrc   = 'x; 
+            ResultSrc   = 3'b100; 
             Branch      = 1'b0;
             AluOp       = 'x;
-            RegDataSrc    = 2'b1;
         end
 
         JAL:begin
