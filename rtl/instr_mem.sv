@@ -19,6 +19,10 @@ end
 
 always_comb begin
     dout = instr_array[addr>>2];
+    /*
+    We shift left by 2 because PC incrememnts in 4s 
+    but our array increments in 1s
+    */
 end
 
 

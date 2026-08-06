@@ -10,7 +10,7 @@ module decoder(
     output logic            ALUSrc,
     output logic [2:0]      ImmSrc,
     output logic            regwrite,
-    output logic            AuiPcSel
+    output logic [1:0]      RegDataSrc
 );
 
 /*
@@ -67,7 +67,7 @@ logic eq_check;
 
 
 always_comb begin
-    AuiPcSel = 1'b0;
+    RegDataSrc = 'b0;
     case(op)
         LW: begin
             regwrite    = 1'b1;
@@ -117,6 +117,7 @@ always_comb begin
             ResultSrc   = 2'b10; 
             Branch      = 1'b0;
             AluOp       = 'x;
+            RegDataSrc  = 1'b0;
         end
 
 
@@ -129,7 +130,7 @@ always_comb begin
             ResultSrc   = 'x; 
             Branch      = 1'b0;
             AluOp       = 'x;
-            AuiPcSel    = 1'b1;
+            RegDataSrc    = 2'b1;
         end
 
         BTYPE: begin

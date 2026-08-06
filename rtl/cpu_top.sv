@@ -5,28 +5,28 @@ module cpu_top(
     
 
 
-logic [31:0] Pc;
-logic [31:0] PcNext;
-logic [31:0] Instr;
-logic        RegWrite;
-logic [2:0]  ImmSrc;
-logic        ALUSrc;
-logic [3:0]  ALUControl;
-logic        Memwrite;
-logic [1:0]  ResultSrc;
-logic        PCSrc;
-logic [31:0] PCPlus4;
-logic [31:0] SrcA;
-logic [31:0] SrcB;
-logic [31:0] ReadData;
-logic [31:0] WriteData;
-logic [31:0] ImmExt;
-logic [31:0] PCTarget;
-logic [31:0] Result;
-logic        Zero;
-logic [31:0] ALUResult;
-logic        AuiPcSel;
-logic        RegWriteWire;
+logic [31:0]    Pc;
+logic [31:0]    PcNext;
+logic [31:0]    Instr;
+logic           RegWrite;
+logic [2:0]     ImmSrc;
+logic           ALUSrc;
+logic [3:0]     ALUControl;
+logic           Memwrite;
+logic [1:0]     ResultSrc;
+logic           PCSrc;
+logic [31:0]    PCPlus4;
+logic [31:0]    SrcA;
+logic [31:0]    SrcB;
+logic [31:0]    ReadData;
+logic [31:0]    WriteData;
+logic [31:0]    ImmExt;
+logic [31:0]    PCTarget;
+logic [31:0]    Result;
+logic           Zero;
+logic [31:0]    ALUResult;
+logic [1:0]     RegDataSrc;
+logic [31:0]    RegDataWire;
 
 
 
@@ -46,17 +46,24 @@ Adding the muxes and adders
 */
 always_comb begin
     SrcB = ALUSrc ? (ImmExt):(WriteData);
-    Result = ResultSrc ? (ReadData):(ALUResult);
-    RegWriteWire = AuiPcSel ? (PCTarget):(Result);
     case(ResultSrc)
-        00:begin
+        2'b00:begin
             Result = ALUResult;
         end
-        01:begin
+        2'b01:begin
             Result = ReadData;
         end
-        10:begin
+        2'b10:begin
             Result = ImmExt;
+        end
+    endcase
+
+        case(RegDataSrc)
+        2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
+            RegDataWire = Result;
+        end
+        2'b01:begin
+            RegDataWire = PCTarget;
         end
     endcase
     PcNext = PCSrc ? (PCTarget):(PCPlus4);
@@ -75,7 +82,7 @@ regfile regfile(
     .ra1(Instr[19:15]),
     .ra2(Instr[24:20]),  
     .wa(Instr[11:7]),        
-    .wd(Result),       
+    .wd(RegDataWire),       
     .rd1(SrcA),
     .rd2(WriteData)   
 );
@@ -100,7 +107,7 @@ decoder decoder (
     .ALUSrc(ALUSrc),
     .ImmSrc(ImmSrc),
     .regwrite(RegWrite),
-    .AuiPcSel(AuiPcSel)
+    .RegDataSrc(RegDataSrc)
 );
 
 extend extend (
