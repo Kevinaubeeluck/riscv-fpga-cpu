@@ -48,7 +48,8 @@ typedef enum logic [6:0] {
     LUI = 7'b0110111,
     AUIPC = 7'b0010111,
     ITYPE = 7'b0010011,
-    JAL = 7'b1101111
+    JAL = 7'b1101111,
+    JALR = 7'b1100111
 } opcodes;
 
 typedef enum logic[2:0]{
@@ -147,6 +148,15 @@ always_comb begin
             AluOp       = 'x;  
         end
 
+        JALR: begin
+            regwrite    = 1'b1;
+            ImmSrc      = IMM_I;
+            ALUSrc      = 1'b1;
+            Memwrite    = 1'b0;
+            ResultSrc   = 2'b11;
+            PCSrc       = 2'b11;
+            AluOp       = offset;
+        end
         BTYPE: begin
             regwrite    = 1'b0;
             ImmSrc      = IMM_B; 

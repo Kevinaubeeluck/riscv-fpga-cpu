@@ -69,7 +69,7 @@ always_comb begin
         end
     endcase
 
-    case(RegDataSrc)
+    case(RegDataSrc) // change this
         2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
             RegDataWire = Result;
         end
@@ -87,6 +87,9 @@ always_comb begin
         end
         2'b10:begin
             PcNext = ImmExt;
+        end
+        2'b11:begin
+            PcNext = ALUResult & ~1;
         end
     endcase
     PCTarget = Pc + ImmExt;
