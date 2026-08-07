@@ -113,7 +113,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #11 — Testbench Wire Width Truncates Decoder Outputs
+## Bug #10 — Testbench Wire Width Truncates Decoder Outputs
 
 | | |
 |---|---|
@@ -125,7 +125,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #12 — JALR Test Drives Wrong Opcode
+## Bug #11 — JALR Test Drives Wrong Opcode
 
 | | |
 |---|---|
@@ -137,7 +137,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #13 — JAL PCSrc Routes to Wrong MUX Input
+## Bug #12 — JAL PCSrc Routes to Wrong MUX Input
 
 | | |
 |---|---|
@@ -149,7 +149,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #15 — GTKWave Number Format Mismatch (Non-bug)
+## Bug #13 — GTKWave Number Format Mismatch (Non-bug)
 
 | | |
 |---|---|
@@ -161,7 +161,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #16 — Result MUX Missing Case Entries
+## Bug #14 — Result MUX Missing Case Entries
 
 | | |
 |---|---|

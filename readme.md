@@ -18,7 +18,7 @@ Hello, welcome to my project repo!! This is my implementation of RISC-V single c
 | AluOp='x poisons block | X on case select destabilises entire always_comb | Unit test |
 | ResultSrc truncated | TB wire 2-bit, decoder output 3-bit, .* silent | Unit test |
 
-> Full verification log with 17 bugs, root causes, and analysis:
+> Full verification log with 14 bugs, root causes, and analysis:
 > [VERIFICATION_LOG.md](VERIFICATION_LOG.md)
 
 ### Testing Architecture
@@ -36,7 +36,7 @@ Hello, welcome to my project repo!! This is my implementation of RISC-V single c
 - Defaults-first in `always_comb` prevents inferred latches
 - Never use 'x on signals feeding case selects in simulation
 - Independent outputs must not share if/else chains
-- [Documented inline as comments at bug sites for future reference]
+- Documented inline as comments at bug sites for future reference
 
 ## Build & Run
 
