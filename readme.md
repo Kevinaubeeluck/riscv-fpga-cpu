@@ -1,6 +1,27 @@
 # RISC-V Single cycle 32I cpu
 
 Hello, welcome to my project repo!! This is my implementation of RISC-V single cycle cpu that supports the base integer ISA. This has 104 unit tests total with each module having its own testbench and verbose enough commenting to understand the reasoning behind the decisions made
+## Architecture
+
+- Single-cycle datapath (1 instruction per clock cycle)
+- 32×32-bit register file (2 read ports, 1 write port, x0 hardwired to zero)
+- Separate instruction and data memories
+- Combinational ALU (10 operations)
+- Full branch logic with eq_check inversion for all 6 branch types
+- Parameterised immediate generator (I, S, B, U, J types)
+
+## Supported Instructions
+
+| Type | Instructions |
+|------|-------------|
+| R-type | ADD, SUB, SLL, SLT, SLTU, XOR, SRL, SRA, OR, AND |
+| I-type (ALU) | ADDI, SLTI, SLTIU, XORI, ORI, ANDI, SLLI, SRLI, SRAI |
+| I-type (Load) | LW |
+| I-type (Jump) | JALR |
+| S-type | SW |
+| B-type | BEQ, BNE, BLT, BGE, BLTU, BGEU |
+| U-type | LUI, AUIPC |
+| J-type | JAL |
 
 ## Verification
 
@@ -46,6 +67,11 @@ Running `make test_all` runs every icarus verilog test for each submodule
 
 Running `make MODULE=(module)` runs the icarus verilog test for the (module)
 
+## Tools
+- **Simulation:** Icarus Verilog (iverilog + vvp)
+- **Waveforms:** GTKWave
+- **Synthesis:** Vivado ML Edition (targeting Xilinx Artix-7)
+- **Board:** Basys 3 (planned)
 
 ## Roadmap
 - [x] Single-cycle CPU (full RV32I)
