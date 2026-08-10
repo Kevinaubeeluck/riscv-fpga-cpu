@@ -1,8 +1,10 @@
 module tb;
+//  Paste parameters 
     parameter   ADDRESS_WIDTH =32;
     parameter   DATA_WIDTH = 32;
 
-    logic [ADDRESS_WIDTH-1:0] addr; //MAKE SURE THESE AREN'T INPUT/OUTPUT JUST LOGIC 
+//  Paste ports list from module under test here removing input/output
+    logic [ADDRESS_WIDTH-1:0] addr; 
     logic [DATA_WIDTH-1:0] wd;
     logic clk;
     logic we;
@@ -36,6 +38,9 @@ module tb;
         #20;
         check("Write test",   rd,   32'h112344);
         
+        // if you want to test internal logic do uut.logic
+        check("Reg test", uut.registers[30], 32'h112344);
+
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
 
         $display("End of testing");

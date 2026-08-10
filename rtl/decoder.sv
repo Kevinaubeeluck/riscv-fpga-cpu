@@ -51,11 +51,11 @@ typedef enum logic [6:0] {
     JALR = 7'b1100111
 } opcodes;
 
-typedef enum logic[2:0]{
-    offset = 3'b00,
-    sub = 3'b01,
-    rtype = 3'b10,
-    tree = 3'b11 /// We're already using Branch as a wire so calling this state tree is easier to think about
+typedef enum logic[1:0]{
+    offset = 2'b00,
+    sub = 2'b01,
+    rtype = 2'b10,
+    tree = 2'b11 /// We're already using Branch as a wire so calling this state tree is easier to think about
 }alu_op_cases;
 
 logic [1:0] AluOp;
@@ -77,7 +77,7 @@ always_comb begin
             ImmSrc      = IMM_I;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b1;
+            ResultSrc   = 3'b1;
             Branch      = 1'b0;
             AluOp       = offset;
         end
@@ -97,7 +97,7 @@ always_comb begin
             ImmSrc      = 'x; //don't care
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b0; 
+            ResultSrc   = 3'b0; 
             Branch      = 1'b0;
             AluOp       = rtype;
         end
@@ -107,7 +107,7 @@ always_comb begin
             ImmSrc      = IMM_I; 
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b0; 
+            ResultSrc   = 3'b0; 
             Branch      = 1'b0;
             AluOp       = rtype;
         end
@@ -117,7 +117,7 @@ always_comb begin
             ImmSrc      = IMM_U; 
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b10; 
+            ResultSrc   = 3'b10; 
             Branch      = 1'b0;
             AluOp       = 'x;
         end
@@ -139,7 +139,7 @@ always_comb begin
             ImmSrc      = IMM_J; 
             ALUSrc      = 'x;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b11; 
+            ResultSrc   = 3'b11; 
             PCSrc       = 2'b01;
             AluOp       = 'x;  
         end
@@ -149,7 +149,7 @@ always_comb begin
             ImmSrc      = IMM_I;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b11;
+            ResultSrc   = 3'b11;
             PCSrc       = 2'b11;
             AluOp       = offset;
         end
@@ -164,10 +164,10 @@ always_comb begin
         end
         default:begin
             regwrite    = 1'b0;
-            ImmSrc      = 2'b0; 
+            ImmSrc      = 3'b0; 
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
-            ResultSrc   = 2'b0; 
+            ResultSrc   = 3'b0; 
             Branch      = 1'b0;
             AluOp       = 2'b0;
         end
@@ -203,9 +203,13 @@ always_comb begin
                     ALUControl = ALU_SLTU; //bgeu  
                     eq_check = 1'b1;
                 end
+                default: begin
+                    ALUControl = ALU_ADD; //This way i can tell if i put in an incorrect func3
+                    eq_check = 1'b1;
+                end
             endcase
             Zero_temp = (eq_check) ? (zero) : (!zero);
-            PCSrc = Branch & Zero_temp;
+            PCSrc = (Branch & Zero_temp) ? (2'b01) : (2'b00);
         end
         rtype: begin 
             case(func3)
@@ -256,6 +260,9 @@ always_comb begin
                     ALUControl = ALU_ADD; //add
                 end
             endcase
+        end
+        default:begin
+            ALUControl = ALU_ADD;
         end
     endcase
 

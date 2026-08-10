@@ -31,7 +31,6 @@ logic [31:0]    ALUResult;
 always_ff @(posedge clk) begin
     if (rst) begin
         Pc <='0;
-        PcNext <= '0;
     end
     else begin
         Pc <= PcNext;
@@ -75,23 +74,29 @@ always_comb begin
         3'b100:begin
             Result = PCTarget;
         end
-    endcase
-
-
-    case(PCSrc)
-        2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
-            PcNext = PCPlus4;
-        end
-        2'b01:begin
-            PcNext = PCTarget;
-        end
-        2'b10:begin
-            PcNext = ImmExt;
-        end
-        2'b11:begin
-            PcNext = ALUResult & ~1;
+        default: begin
+            Result = PCPlus4;
         end
     endcase
+    if(rst)begin
+        PcNext = '0;
+    end
+    else begin 
+        case(PCSrc)
+            2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
+                PcNext = PCPlus4;
+            end
+            2'b01:begin
+                PcNext = PCTarget;
+            end
+            2'b10:begin
+                PcNext = ImmExt;
+            end
+            2'b11:begin
+                PcNext = ALUResult & ~1;
+            end
+    endcase
+    end
 
 end
 

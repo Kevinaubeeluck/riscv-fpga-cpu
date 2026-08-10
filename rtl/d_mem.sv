@@ -13,7 +13,7 @@ logic [DATA_WIDTH-1:0] mem_array [10*ADDRESS_WIDTH-1:0];
 
 always_ff @(posedge clk) begin
     if (we == 1'b1) begin
-        mem_array[addr] = wd;
+        mem_array[addr] <= wd;
     end
 end
 
