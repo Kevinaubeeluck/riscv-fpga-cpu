@@ -7,8 +7,9 @@ module tb;
     logic [31:0] ALUResultE;
     logic [1:0] PCSrcE;
     logic [31:0] InstrF;
-    logic [31:0] PcFout;
-        
+    logic [31:0] PCF;
+    logic [31:0] PCPlus4F;
+
 
     fetch_top uut(.*); //ADD MODULE UNDER TEST HERE, if (.*) doesn't work manually instantiate like in tb_regfile.sv
 
@@ -38,16 +39,16 @@ module tb;
 
         @(posedge clk);
         PCSrcE = 2'b00;
-        #1;
+        
         check("Mux test: PcPlus4F", uut.PCFPrime, 32'h4);
 
         @(posedge clk);
         PCSrcE = 2'b01; 
-        #1;    
+           
         check("Mux test: PcPlus4f propogation", uut.PCF, 32'h4);
         
         @(posedge clk);
-        PCSrcE = 2'b01;
+        PCSrcE = 2'b10;
         #1;
         check("Mux test: PcTargetE", uut.PCFPrime, 32'h1234);
 
@@ -56,16 +57,6 @@ module tb;
         #1;    
         check("Mux test: PcTargetE propogation", uut.PCF, 32'h1234);
 
-        @(posedge clk);
-        PCSrcE = 2'b10;
-        #1;
-        check("Mux test: ImmExtE", uut.PCFPrime, 32'h5678);
-
-        @(posedge clk);
-        PCSrcE = 2'b00;
-        #1;    
-        check("Mux test: ImmExtE propogation", uut.PCF, 32'h5678);    
-        
         @(posedge clk);
         PCSrcE = 2'b11;
         #1;

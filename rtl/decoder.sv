@@ -2,12 +2,15 @@ module decoder(
     input logic [6:0]       op,
     input logic [2:0]       func3,
     input logic             funct7,
-    input logic             zero, 
-    output logic [1:0]      PCSrc,
+//    input logic             zero, 
+ //   output logic [1:0]      PCSrc,
     output logic [2:0]      ResultSrc,
     output logic            Memwrite,
     output logic [3:0]      ALUControl,
     output logic            ALUSrc,
+    output logic            Jump,
+    output logic            Branch,
+    output logic            eq_check,
     output logic [2:0]      ImmSrc,
     output logic            regwrite
 );
@@ -60,16 +63,14 @@ typedef enum logic[1:0]{
 
 logic [1:0] AluOp;
 
-logic Branch;
 
-logic Zero_temp;
+// logic Zero_temp;
 
-logic eq_check;
 
 
 
 always_comb begin
-    PCSrc = '0;
+  //  PCSrc = '0;
 
     case(op)
         LW: begin
@@ -78,6 +79,7 @@ always_comb begin
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
             ResultSrc   = 3'b1;
+            Jump        = '0;
             Branch      = 1'b0;
             AluOp       = offset;
         end
@@ -89,6 +91,7 @@ always_comb begin
             Memwrite    = 1'b1;
             ResultSrc   = 'x; //don't care
             Branch      = 1'b0;
+            Jump        = '0;
             AluOp       = offset;
         end
 
@@ -98,6 +101,7 @@ always_comb begin
             ALUSrc      = 1'b0;
             Memwrite    = 1'b0;
             ResultSrc   = 3'b0; 
+            Jump        = 1'b0;
             Branch      = 1'b0;
             AluOp       = rtype;
         end
@@ -109,6 +113,7 @@ always_comb begin
             Memwrite    = 1'b0;
             ResultSrc   = 3'b0; 
             Branch      = 1'b0;
+            Jump        = '0;
             AluOp       = rtype;
         end
 
@@ -119,6 +124,7 @@ always_comb begin
             Memwrite    = 1'b0;
             ResultSrc   = 3'b10; 
             Branch      = 1'b0;
+            Jump        = '0;
             AluOp       = 'x;
         end
 
@@ -131,6 +137,7 @@ always_comb begin
             Memwrite    = 1'b0;
             ResultSrc   = 3'b100; 
             Branch      = 1'b0;
+            Jump        = '0;
             AluOp       = 'x;
         end
 
@@ -140,7 +147,8 @@ always_comb begin
             ALUSrc      = 'x;
             Memwrite    = 1'b0;
             ResultSrc   = 3'b11; 
-            PCSrc       = 2'b01;
+            Jump        = 1'b1;
+            Branch      = '0;
             AluOp       = 'x;  
         end
 
@@ -150,7 +158,8 @@ always_comb begin
             ALUSrc      = 1'b1;
             Memwrite    = 1'b0;
             ResultSrc   = 3'b11;
-            PCSrc       = 2'b11;
+            Jump        = 1'b1;
+            Branch       = 1'b1;
             AluOp       = offset;
         end
         BTYPE: begin
@@ -208,8 +217,8 @@ always_comb begin
                     eq_check = 1'b1;
                 end
             endcase
-            Zero_temp = (eq_check) ? (zero) : (!zero);
-            PCSrc = (Branch & Zero_temp) ? (2'b01) : (2'b00);
+            //Zero_temp = (eq_check) ? (zero) : (!zero);
+           // PCSrc = (Branch & Zero_temp) ? (2'b01) : (2'b00);
         end
         rtype: begin 
             case(func3)

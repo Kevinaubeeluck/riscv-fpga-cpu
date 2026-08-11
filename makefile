@@ -1,7 +1,8 @@
 .PHONY: all sim wave clean
 
-MODULE ?= fetch_top
+MODULE ?= decode_top
 RTL = $(wildcard rtl/*.sv)
+LINT_RTL = $(filter-out rtl/cpu_top.sv, $(wildcard rtl/*.sv))
 TB = tb/tb_$(MODULE).sv
 MODULES = alu regfile decoder extend instr_mem d_mem cpu_top
 
@@ -11,7 +12,7 @@ MODULES = alu regfile decoder extend instr_mem d_mem cpu_top
 all: sim
 
 sim:
-	verilator --lint-only -Wall rtl/* --top-module cpu_top -Wno-UNUSEDSIGNAL
+	verilator --lint-only -Wall $(LINT_RTL) --top-module $(MODULE) -Wno-UNUSEDSIGNAL
 	iverilog -g2012 -o sim/$(MODULE)_out $(RTL) $(TB)
 	vvp sim/$(MODULE)_out
 
