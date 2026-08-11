@@ -1,8 +1,8 @@
 module decode_top(
     input logic clk,
     input logic [31:0]      InstrD,
-    input logic [31:0]      PcD,
-    input logic [31:0]      PcPlus4F,
+    input logic [31:0]      PcD_in,
+    input logic [31:0]      PcPlus4D_in,
     input logic             RegWriteW,
     input logic [4:0]       RdW,
     input logic [31:0]      ResultW,
@@ -14,9 +14,11 @@ module decode_top(
     output logic [31:0]     ImmExtD,
     output logic [4:0]      RdD,
     output logic [31:0]     Rd1D,
+    output logic [31:0]     PcD_out,
     output logic            BranchD,
     output logic            JumpD,
     output logic [31:0]     Rd2D,
+    output logic [31:0]     PcPlus4D_out,
     output logic            eq_checkD
 );  
 
@@ -24,6 +26,8 @@ logic [2:0]     ImmSrcD;
 
 always_comb begin
     RdD = InstrD[11:7];
+    PcD_out = PcD_in;
+    PcPlus4D_out = PcPlus4D_in;
 end
 
 decoder decoder (

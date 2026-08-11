@@ -34,13 +34,17 @@ always_comb begin
         PcSrcE {JumpE,BranchE}
         
         00: No jump/branch
-        10:Branch to pc + imm
-        11: branch to pc + R[rs1]
+        01: Branch to pc + imediate
+        10:Jump to pc + imm
+        11: Jump to pc + R[rs1]
 
         */
         case(PCSrcE)
             2'b00:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
                 PCFPrime = PCPlus4F;
+            end
+            2'b01:begin //AGAIN NEVER USE BARE LITERALS LIKE 00 ALWAYS USE 2'B00 OR SOMETHING
+                PCFPrime = PCTargetE;
             end
             2'b10:begin
                 PCFPrime = PCTargetE;
