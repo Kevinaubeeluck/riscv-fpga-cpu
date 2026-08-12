@@ -1,8 +1,8 @@
 .PHONY: all sim wave clean
 
 MODULE ?= pipeline_top
-RTL = $(wildcard rtl/*.sv)
-LINT_RTL = $(filter-out rtl/cpu_top.sv, $(wildcard rtl/*.sv))
+RTL = $(shell find rtl -name '*.sv')
+LINT_RTL = $(filter-out rtl/cpu_top.sv, $(shell find rtl -name '*.sv'))
 TB = tb/tb_$(MODULE).sv
 MODULES = alu regfile decoder extend instr_mem d_mem cpu_top
 
