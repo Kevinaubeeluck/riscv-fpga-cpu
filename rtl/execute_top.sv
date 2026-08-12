@@ -4,7 +4,7 @@ module execute_top(
     input logic [3:0]      ALUControlE,
     input logic            MemwriteE_in,
     input logic [2:0]      ResultSrcE_in,
-    input logic [31:0]     ImmExtE,
+    input logic [31:0]     ImmExtE_in,
     input logic [4:0]      RdE_in,
     input logic [31:0]     Rd1E,
     input logic [31:0]     PcE,
@@ -18,6 +18,7 @@ module execute_top(
     output logic           MemwriteE_out,
     output logic [31:0]    PcTargetE,
     output logic [31:0]    ALUResultE,
+    output logic [31:0]    ImmExtE_out,
     output logic [31:0]    WriteDataE,
     output logic [31:0]    PcPlus4E_out,
     output logic [4:0]     RdE_out,
@@ -39,11 +40,12 @@ always_comb begin
     RegWriteE_out = RegWriteE_out;
     MemwriteE_out = MemwriteE_in;
     ResultSrcE_out = ResultSrcE_in;
+    ImmExtE_out = ImmExtE_in;
 
     
-    PcTargetE = PcE + ImmExtE;
+    PcTargetE = PcE + ImmExtE_in;
 
-    SrcBE = (ALUSrcE) ? (ImmExtE) : (Rd2E);
+    SrcBE = (ALUSrcE) ? (ImmExtE_in) : (Rd2E);
 
     WriteDataE = Rd2E;
 end

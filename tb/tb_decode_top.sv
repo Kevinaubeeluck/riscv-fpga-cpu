@@ -6,8 +6,8 @@ module tb;
 //  Paste ports list from module under test here removing input/output
     logic clk;
     logic [31:0]      InstrD;
-    logic [31:0]      PcD;
-    logic [31:0]      PcPlus4F;
+    logic [31:0]      PcD_in;
+    logic [31:0]      PcPlus4D_in;
     logic             RegWriteW;
     logic [4:0]       RdW;
     logic [31:0]      ResultW;
@@ -19,9 +19,11 @@ module tb;
     logic [31:0]     ImmExtD;
     logic [4:0]      RdD;
     logic [31:0]     Rd1D;
+    logic [31:0]     PcD_out;
     logic            BranchD;
     logic            JumpD;
     logic [31:0]     Rd2D;
+    logic [31:0]     PcPlus4D_out;
     logic            eq_checkD;
 
 
