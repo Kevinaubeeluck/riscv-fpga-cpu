@@ -43,7 +43,7 @@ module tb;
         */
         #20; addr = 32'd30; wd = 32'h555555; we = 1'b0;
         #20;
-        check("Write test",   rd,   32'h112344);
+        check("Read test",   rd,   32'h112344);
 
         $display("\n===== Results: %0d passed, %0d failed =====", pass_count, fail_count);
 
