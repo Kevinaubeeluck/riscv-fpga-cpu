@@ -5,13 +5,17 @@ module wb_top(
     input logic [31:0]  ReadDataW,
     input logic [31:0]  PcPlus4W,
     input logic [31:0]  PcTargetW,
+    input logic [4:0]  RdW_in,
     input logic [31:0]  ImmExtW,
     output logic        RegWriteW_out,
+    output logic [4:0]  RdW_out,
     output logic [31:0] ResultW
+    
 );
     
 always_comb begin
     RegWriteW_out = RegWriteW_in;
+    RdW_out = RdW_in;
         case(ResultSrcW)
         3'b000:begin
             ResultW = ALUResultW;

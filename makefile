@@ -1,6 +1,6 @@
 .PHONY: all sim wave clean
 
-MODULE ?= wb_top
+MODULE ?= pipeline_top
 RTL = $(wildcard rtl/*.sv)
 LINT_RTL = $(filter-out rtl/cpu_top.sv, $(wildcard rtl/*.sv))
 TB = tb/tb_$(MODULE).sv

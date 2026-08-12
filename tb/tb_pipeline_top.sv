@@ -1,0 +1,36 @@
+module tb;
+    logic clk;
+    logic rst;
+
+    pipeline_top uut(.*); //ADD MODULE UNDER TEST HERE 
+
+    always #5 clk = ~clk;
+
+
+    int pass_count = 0;
+    int fail_count = 0;
+
+    task check(string name, logic [31:0] actual, logic [31:0] expected);
+    if (actual !== expected) begin
+        $error("%s: expected %0h, got %0h", name, expected, actual);
+        fail_count++;
+    end else
+        pass_count++;
+    endtask
+
+
+    initial begin 
+        $dumpfile("waves.vcd");
+        $dumpvars(0,tb);
+        clk = 0; rst = 1; //ALWAYS remember to reset all clocked logic 
+        #10;
+        rst = 0;
+
+        #2000;
+        
+        $display("\n===== Resu  lts: %0d passed, %0d failed =====", pass_count, fail_count);
+
+        $display("End of testing");
+        #20; $finish;
+    end
+endmodule
