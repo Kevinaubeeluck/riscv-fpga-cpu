@@ -14,6 +14,10 @@ module ID_EX(
     input logic [31:0]     Rd2D,
     input logic [31:0]     PcPlus4D_out,
     input logic            eq_checkD,
+    input logic [4:0]     Rs1D,
+    input logic [4:0]     Rs2D,
+    output logic [4:0]     Rs1E,
+    output logic [4:0]     Rs2E,
     output logic            RegWriteE_in,
     output logic            ALUSrcE,
     output logic [3:0]      ALUControlE,
@@ -45,6 +49,8 @@ always_ff @(posedge clk) begin
     Rd2E <= Rd2D;
     PcPlus4E_in <= PcPlus4D_out;
     eq_checkE <= eq_checkD;   
+    Rs1E <= Rs1D;
+    Rs2E <= Rs2D;
 end
 
 endmodule

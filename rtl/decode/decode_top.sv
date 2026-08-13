@@ -19,13 +19,17 @@ module decode_top(
     output logic            JumpD,
     output logic [31:0]     Rd2D,
     output logic [31:0]     PcPlus4D_out,
-    output logic            eq_checkD
+    output logic            eq_checkD,
+    output logic [4:0]     Rs1D,
+    output logic [4:0]     Rs2D
 );  
 
 logic [2:0]     ImmSrcD;
 
 always_comb begin
     RdD = InstrD[11:7];
+    Rs1D = InstrD[19:15];
+    Rs2D = InstrD[24:20];
     PcD_out = PcD_in;
     PcPlus4D_out = PcPlus4D_in;
 end

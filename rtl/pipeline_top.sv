@@ -28,6 +28,8 @@ logic            BranchD;
 logic            JumpD;
 logic [31:0]     Rd2D;
 logic [31:0]     PcPlus4D_out;
+logic [4:0]     Rs2D;
+logic [4:0]     Rs1D;
 logic            eq_checkD;
 
 logic            RegWriteE_in;
@@ -38,6 +40,8 @@ logic [2:0]      ResultSrcE_in;
 logic [31:0]     ImmExtE_in;
 logic [4:0]      RdE_in;
 logic [31:0]     Rd1E;
+logic [4:0]     Rs2E;
+logic [4:0]     Rs1E;
 logic [31:0]     PcE_in;
 logic            BranchE;
 logic            JumpE;
@@ -83,6 +87,15 @@ logic [31:0]  PcPlus4W;
 logic [31:0]  PcTargetW;
 logic [31:0]  ImmExtW;
 
+logic [1:0]    ForwardAE;
+logic [1:0]    ForwardBE;
+logic [4:0]      Rs1E_in;
+logic [4:0]      Rs2E_in;
+logic [4:0]      Rs1E_out;
+logic [4:0]      Rs2E_out;
+
+
+
 fetch_top fetch_top(
     .clk(clk),
     .rst(rst),
@@ -126,7 +139,9 @@ decode_top decode_top(
     .JumpD(JumpD),
     .Rd2D(Rd2D),
     .PcPlus4D_out(PcPlus4D_out),
-    .eq_checkD(eq_checkD)
+    .eq_checkD(eq_checkD),
+    .Rs1D(Rs1D),
+    .Rs2D(Rs2D)
 );
 
 ID_EX ID_EX(
@@ -153,6 +168,10 @@ ID_EX ID_EX(
     .ImmExtE_in(ImmExtE_in),
     .RdE_in(RdE_in),
     .Rd1E(Rd1E),
+    .Rs1D(Rs1D),
+    .Rs2D(Rs2D),
+    .Rs1E(Rs1E_in),
+    .Rs2E(Rs2E_in),
     .PcE_in(PcE_in),
     .BranchE(BranchE),
     .JumpE(JumpE),
@@ -173,6 +192,14 @@ execute_top execute_top(
     .PcE_in(PcE_in),
     .BranchE(BranchE),
     .JumpE(JumpE),
+    .ForwardAE(ForwardAE),
+    .ForwardBE(ForwardBE),
+    .Rs1E_in(Rs1E_in),
+    .Rs2E_in(Rs2E_in),
+    .Rs1E_out(Rs1E_out),
+    .Rs2E_out(Rs2E_out),
+    .ResultW(ResultW),
+    .ALUResultM_out(ALUResultM_out),
     .Rd2E(Rd2E),
     .PcPlus4E_in(PcPlus4E_in),
     .eq_checkE(eq_checkE),
@@ -264,6 +291,17 @@ wb_top wb_top (
     .RdW_out(RdW_out),
     .RegWriteW_out(RegWriteW_out),
     .ResultW(ResultW)
+);
+
+hazard_unit hazard_unit (
+   .Rs1E_out(Rs1E_out),
+   .Rs2E_out(Rs2E_out),
+   .RdM_out(RdM_out),
+   .RdW_out(RdW_out),
+   .RegWriteW_out(RegWriteW_out),
+   .RegWriteM_out(RegWriteM_out),
+   .ForwardAE(ForwardAE),
+   .ForwardBE(ForwardBE)
 );
 
 endmodule

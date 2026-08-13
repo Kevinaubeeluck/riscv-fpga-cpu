@@ -10,12 +10,20 @@ module execute_top(
     input logic [31:0]     PcE_in,
     input logic            BranchE,
     input logic            JumpE,
+    input logic [1:0]      ForwardAE,
+    input logic [1:0]      ForwardBE,
+    input logic [4:0]      Rs1E_in,
+    input logic [4:0]      Rs2E_in,
+    input logic [31:0]     ResultW,
+    input logic [31:0]     ALUResultM_out,
     input logic [31:0]     Rd2E,
     input logic [31:0]     PcPlus4E_in,
     input logic            eq_checkE,
     output logic           RegWriteE_out,
     output logic [2:0]     ResultSrcE_out,
     output logic           MemwriteE_out,
+    output logic [4:0]      Rs1E_out,
+    output logic [4:0]      Rs2E_out,
     output logic [31:0]    PcTargetE,
     output logic [31:0]    ALUResultE,
     output logic [31:0]    ImmExtE_out,
@@ -28,6 +36,7 @@ module execute_top(
     
 logic           zeroE;
 logic [31:0]    SrcBE;
+logic [31:0]    SrcAE;
 logic           Zero_temp;
 logic           Branch_check;
 
@@ -43,17 +52,49 @@ always_comb begin
     ResultSrcE_out = ResultSrcE_in;
     ImmExtE_out = ImmExtE_in;
     PcE_out = PcE_in;
+    Rs1E_out = Rs1E_in;
+    Rs2E_out = Rs2E_in;
 
     
     PcTargetE = PcE_in + ImmExtE_in;
 
-    SrcBE = (ALUSrcE) ? (ImmExtE_in) : (Rd2E);
 
-    WriteDataE = Rd2E;
+    case(ForwardAE)
+        2'b00:begin
+            SrcAE = Rd1E;
+        end
+        2'b01:begin
+            SrcAE = ResultW;
+        end
+        2'b10:begin
+            SrcAE = ALUResultM_out;
+        end
+        default:begin
+            SrcAE = Rd1E;
+        end
+    endcase
+
+    case(ForwardBE)
+        2'b00:begin
+            WriteDataE = Rd2E;
+        end
+        2'b01:begin
+            WriteDataE = ResultW;
+        end
+        2'b10:begin
+            WriteDataE = ALUResultM_out;
+        end
+        default:begin
+            WriteDataE = Rd2E;
+        end
+    endcase
+
+    SrcBE = (ALUSrcE) ? (ImmExtE_in) : (WriteDataE);
+
 end
 
 alu alu(
-    .a(Rd1E),
+    .a(SrcAE),
     .b(SrcBE),
     .alu_op(ALUControlE),
     .result(ALUResultE),

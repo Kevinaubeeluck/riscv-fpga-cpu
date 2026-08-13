@@ -28,8 +28,19 @@ module regfile (
         //     rd1 = registers[ra1];
         //     rd2 = registers[ra2];
         // end
-        rd1 = (ra1 == '0) ? ('0):(registers[ra1]);
-        rd2 = (ra2 == '0) ? ('0):(registers[ra2]);
+        if(ra1 == wa && we && ra1 != 0)begin
+            rd1 = wd;
+        end
+        else begin
+            rd1 = (ra1 == '0) ? ('0):(registers[ra1]);
+        end
+
+        if(ra2 == wa && we && ra2 != 0)begin
+            rd2 = wd;
+        end
+        else begin
+            rd2 = (ra2 == '0) ? ('0):(registers[ra2]);
+        end
     end
 
     always_ff@(posedge clk)begin
