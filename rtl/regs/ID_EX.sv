@@ -1,5 +1,6 @@
 module ID_EX(
     input logic            clk,
+    input logic            en,
     input logic            RegWriteD,
     input logic            ALUSrcD,
     input logic [3:0]      ALUControlD,
@@ -35,22 +36,42 @@ module ID_EX(
 );
     
 always_ff @(posedge clk) begin
-    RegWriteE_in <= RegWriteD;
-    ALUSrcE <= ALUSrcD;
-    ALUControlE <= ALUControlD;
-    MemwriteE_in <= MemwriteD;
-    ResultSrcE_in <= ResultSrcD;
-    ImmExtE_in <= ImmExtD;
-    RdE_in <= RdD;
-    Rd1E <= Rd1D;
-    PcE_in <= PcD_out;
-    BranchE <= BranchD;
-    JumpE <= JumpD;
-    Rd2E <= Rd2D;
-    PcPlus4E_in <= PcPlus4D_out;
-    eq_checkE <= eq_checkD;   
-    Rs1E <= Rs1D;
-    Rs2E <= Rs2D;
+    if(en) begin
+        RegWriteE_in <= RegWriteD;
+        ALUSrcE <= ALUSrcD;
+        ALUControlE <= ALUControlD;
+        MemwriteE_in <= MemwriteD;
+        ResultSrcE_in <= ResultSrcD;
+        ImmExtE_in <= ImmExtD;
+        RdE_in <= RdD;
+        Rd1E <= Rd1D;
+        PcE_in <= PcD_out;
+        BranchE <= BranchD;
+        JumpE <= JumpD;
+        Rd2E <= Rd2D;
+        PcPlus4E_in <= PcPlus4D_out;
+        eq_checkE <= eq_checkD;   
+        Rs1E <= Rs1D;
+        Rs2E <= Rs2D;
+    end
+    else begin
+        RegWriteE_in <= '0;
+        ALUSrcE <= '0;
+        ALUControlE <= '0;
+        MemwriteE_in <= '0;
+        ResultSrcE_in <= '0;
+        ImmExtE_in <= '0;
+        RdE_in <= '0;
+        Rd1E <= '0;
+        PcE_in <= '0;
+        BranchE <= '0;
+        JumpE <= '0;
+        Rd2E <= '0;
+        PcPlus4E_in <= '0;
+        eq_checkE <= '0;
+        Rs1E <= '0;
+        Rs2E <= '0;
+    end
 end
 
 endmodule

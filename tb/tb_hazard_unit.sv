@@ -5,15 +5,21 @@ module tb;
 
     logic clk;
 //  Paste ports list from module under test here removing input/output
-    logic [4:0]         Rs1E_out;
-    logic [4:0]         Rs2E_out;
-    logic [31:0]        ALUResultM_out;
-    logic [4:0]         RdM_out;
-    logic [4:0]         RdW_out;
-    logic               RegWriteW_out;
-    logic               RegWriteM_out;
-    logic [1:0]         ForwardAE;
-    logic [1:0]         ForwardBE;
+    logic [4:0]           Rs1E_out;
+    logic [4:0]           Rs2E_out;
+    logic [4:0]           Rs1D;
+    logic [4:0]           Rs2D;
+    logic [2:0]           ResultSrcE_out;
+    logic [4:0]           RdM_out;
+    logic [4:0]           RdW_out;
+    logic [4:0]           RdE_out;
+    logic                 RegWriteW_out;
+    logic                 RegWriteM_out;
+    logic [1:0]          ForwardAE;
+    logic [1:0]          ForwardBE;
+    logic                StallD;
+    logic                StallF;
+    logic                FlushE;
 
 
     hazard_unit uut(.*); //ADD MODULE UNDER TEST HERE, if (.*) doesn't work manually instantiate like in tb_regfile.sv
@@ -120,8 +126,51 @@ module tb;
         #20;
         check("Forward AE writeback test",   ForwardAE,   2'b01);
         check("Forward BE writeback test",   ForwardBE,   2'b10);
+        /*
+        Let's check our StallF logic
+        */
+
+        #20; 
+        ResultSrcE_out = 3'b001;
+        RdE_out = 1;
+        Rs1D = 1;
+        Rs2D = 1;
+        #20;
+        check("StallF check",   StallF,   1'b0);
+        check("StallD check",   StallD,   1'b0);
+        check("FlushE check",   FlushE,   1'b0);
 
         
+        #20; 
+        ResultSrcE_out = 3'b001;
+        RdE_out = 1;
+        Rs1D = 0;
+        Rs2D = 1;
+        #20;
+        check("StallF check",   StallF,   1'b0);
+        check("StallD check",   StallD,   1'b0);
+        check("FlushE check",   FlushE,   1'b0);
+
+        #20; 
+        ResultSrcE_out = 3'b001;
+        RdE_out = 1;
+        Rs1D = 0;
+        Rs2D = 0;
+        #20;
+        check("StallF check",   StallF,   1'b1);
+        check("StallD check",   StallD,   1'b1);
+        check("FlushE check",   FlushE,   1'b1);
+
+        #20; 
+        ResultSrcE_out = 3'b010;
+        RdE_out = 1;
+        Rs1D = 1;
+        Rs2D = 1;
+        #20;
+        check("StallF check",   StallF,   1'b1);
+        check("StallD check",   StallD,   1'b1);
+        check("FlushE check",   FlushE,   1'b1);
+
         
 
         // if you want to test internal logic do uut.logic

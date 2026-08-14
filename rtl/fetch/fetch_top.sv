@@ -1,6 +1,7 @@
 module fetch_top(
     input logic clk,
     input logic rst,
+    input logic en,
     input logic [31:0] PCTargetE,
     input logic [31:0] ImmExtE,
     input logic [31:0] ALUResultE,
@@ -18,8 +19,11 @@ always_ff @(posedge clk) begin
     if (rst) begin
         PCF <= '0;
     end
-    else begin
+    else if(en) begin
         PCF <= PCFPrime;
+    end
+    else begin
+        PCF <= PCF;
     end
     
 end

@@ -94,11 +94,15 @@ logic [4:0]      Rs2E_in;
 logic [4:0]      Rs1E_out;
 logic [4:0]      Rs2E_out;
 
+logic                StallD;
+logic                StallF;
+logic                FlushE;
 
 
 fetch_top fetch_top(
     .clk(clk),
     .rst(rst),
+    .en(StallF),
     .PCTargetE(PcTargetE),
     .ImmExtE(ImmExtE_out),
     .ALUResultE(ALUResultE),
@@ -111,6 +115,7 @@ fetch_top fetch_top(
 IF_ID IF_ID(
     .clk(clk),
     .InstrF(InstrF),
+    .en(StallD),
     .PCF(PCF),
     .PCPlus4F(PCPlus4F),
     .InstrD(InstrD),
@@ -146,6 +151,7 @@ decode_top decode_top(
 
 ID_EX ID_EX(
     .clk(clk),
+    .en(FlushE),
     .RegWriteD(RegWriteD),
     .ALUSrcD(ALUSrcD),
     .ALUControlD(ALUControlD),
@@ -297,11 +303,18 @@ hazard_unit hazard_unit (
    .Rs1E_out(Rs1E_out),
    .Rs2E_out(Rs2E_out),
    .RdM_out(RdM_out),
+   .Rs1D(Rs1D),
+   .Rs2D(Rs2D),
+   .ResultSrcE_out(ResultSrcE_out),
    .RdW_out(RdW_out),
+   .RdE_out(RdE_out),
    .RegWriteW_out(RegWriteW_out),
    .RegWriteM_out(RegWriteM_out),
    .ForwardAE(ForwardAE),
-   .ForwardBE(ForwardBE)
+   .ForwardBE(ForwardBE),
+   .StallF(StallF),
+   .StallD(StallD),
+   .FlushE(FlushE)
 );
 
 endmodule
