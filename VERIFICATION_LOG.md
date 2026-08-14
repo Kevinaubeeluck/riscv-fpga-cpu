@@ -4,7 +4,7 @@
 This is a record of every single bug i found testing each unit individually and as a full cpu. I have it setup in a regular symptom, cause, detection, fix for it, lesson to learn 
 ---
 
-## Bug #1 — x0 Hardwire Test Logic Inverted
+## Bug #1 - x0 Hardwire Test Logic Inverted
 
 | | |
 |---|---|
@@ -16,7 +16,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #2 — rd1 Always Reads 0
+## Bug #2 - rd1 Always Reads 0
 
 | | |
 |---|---|
@@ -28,7 +28,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #3 — Array Name Typo (`register` vs `registers`)
+## Bug #3 - Array Name Typo (`register` vs `registers`)
 
 | | |
 |---|---|
@@ -40,7 +40,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #4 — Simulation Binaries Committed to Git
+## Bug #4 - Simulation Binaries Committed to Git
 
 | | |
 |---|---|
@@ -52,31 +52,31 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #5 — `test_all` Target Missing `-g2012` Flag
+## Bug #5 - `test_all` Target Missing `-g2012` Flag
 
 | | |
 |---|---|
 | **Symptom** | "syntax error / I give up." on line 1 of testbench |
 | **Root Cause** | Makefile `test_all` target omitted `-g2012`, so Icarus treated file as Verilog-2005. `logic` keyword is SystemVerilog-only. |
-| **Detection** | `make test_all` — first module compiled fine (had flag), second didn't |
+| **Detection** | `make test_all` - first module compiled fine (had flag), second didn't |
 | **Fix** | Add `-g2012` to the iverilog command in test_all loop |
 | **Lesson** | This is less of a lesson for remembering the "I give up" keyword and more for searching up error messages SPECIFIC to the tool i'm using which in this case was icarus verilog. |
 
 ---
 
-## Bug #6 — J-type Immediate Doubled
+## Bug #6 - J-type Immediate Doubled
 
 | | |
 |---|---|
 | **Symptom** | JAL with offset 0x4C produces ImmExt = 0x98 (exactly 2×) |
 | **Root Cause** | When i was coding extend.sv, i saw the fact that any branch/jump instruction has an implicit 0 at the bottom of it so i thought i would just have to shift it. I however, concatenated a 0 at the bottom aswell meaning i had already got out my immediate and also shifted it|
 | **Detection** | CPU integration test: JAL landed at wrong PC target |
-| **Fix** | Remove the extra shift — just concatenate `1'b0`, the encoding already accounts for alignment |
+| **Fix** | Remove the extra shift - just concatenate `1'b0`, the encoding already accounts for alignment |
 | **Lesson** | Walk through the logic bit by bit if needed and having somewhere to write WHY i did a step logically would have prevented this error as immediately as you put it words, it becomes a lot clearer why this is stupid |
 
 ---
 
-## Bug #7 — ResultSrc Wire Width Mismatch in cpu_top
+## Bug #7 - ResultSrc Wire Width Mismatch in cpu_top
 
 | | |
 |---|---|
@@ -88,7 +88,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #8 — Register File wd=X Despite Valid Result
+## Bug #8 - Register File wd=X Despite Valid Result
 
 | | |
 |---|---|
@@ -100,12 +100,12 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #9 — always_comb Ordering: Signals Used Before Computed
+## Bug #9 - always_comb Ordering: Signals Used Before Computed
 
 | | |
 |---|---|
 | **Symptom** | PCTarget and Result gave me XXXX in gtkwave despite correct inputs |
-| **Root Cause** | `case(ResultSrc)` and `case(PCSrc)` used PCTarget and PCPlus4, but those were assigned AFTER the case statements. `always_comb` is sequential top-to-bottom — reading before assigning gives the previous evaluation's value. |
+| **Root Cause** | `case(ResultSrc)` and `case(PCSrc)` used PCTarget and PCPlus4, but those were assigned AFTER the case statements. `always_comb` is sequential top-to-bottom - reading before assigning gives the previous evaluation's value. |
 | **Detection** | Waveform: values lagged by one cycle |
 | **Fix** | Move `PCTarget = Pc + ImmExt;` and `PCPlus4 = Pc + 4;` to the TOP of the always_comb block |
 | **Lesson** | In an always_comb block, ALWAYS compute dependencies before you use them otherwise you assign garbage which won't update when the dependencies resolve later. It's the same thing as using a variable without initialisation.  |
@@ -113,7 +113,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #10 — Testbench Wire Width Truncates Decoder Outputs
+## Bug #10 - Testbench Wire Width Truncates Decoder Outputs
 
 | | |
 |---|---|
@@ -125,7 +125,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #11 — JALR Test Drives Wrong Opcode
+## Bug #11 - JALR Test Drives Wrong Opcode
 
 | | |
 |---|---|
@@ -137,7 +137,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #12 — JAL PCSrc Routes to Wrong MUX Input
+## Bug #12 - JAL PCSrc Routes to Wrong MUX Input
 
 | | |
 |---|---|
@@ -149,11 +149,11 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #13 — GTKWave Number Format Mismatch (Non-bug)
+## Bug #13 - GTKWave Number Format Mismatch (Non-bug)
 
 | | |
 |---|---|
-| **Symptom** | Result = 305418240 but ImmExt = 12345000 — appear different |
+| **Symptom** | Result = 305418240 but ImmExt = 12345000 - appear different |
 | **Root Cause** | Not a bug. 305418240 (decimal) = 0x12345000 (hex). Signals displayed in different radixes. |
 | **Detection** | Visual inspection of waveform |
 | **Fix** | Right-click signal → Data Format → Hex |
@@ -161,7 +161,7 @@ This is a record of every single bug i found testing each unit individually and 
 
 ---
 
-## Bug #14 — Result MUX Missing Case Entries
+## Bug #14 - Result MUX Missing Case Entries
 
 | | |
 |---|---|
@@ -172,19 +172,75 @@ This is a record of every single bug i found testing each unit individually and 
 | **Lesson** | Changing the decoder output means changing all muxes that are linked to that output, again this is a tracing the datapath issue |
 
 ---
+## Bug #15 - PcPlus4F Check Fails Due to Extra Clock Edges
 
+|  |  |
+| --- | --- |
+| **Symptom** | PCFprime incremented +8 instead of +4 |
+| **Root Cause** | My testbench had a #1 after an @posedge clk which pushed it over into the next cycle |
+| **Fix** | Don't use #1 after posedge in benchmark as it messes up timings|
+| **Lesson** | For signals that advance every clock edge (like PC), any extra time = extra increments. Count your posedges. |
+
+---
+
+## Bug #16 - PCTargetE/ALUResultE Zero-Delay Race Condition
+
+|  |  |
+| --- | --- |
+| **Symptom** | Expected 1234, got c. Stale values from previous cycle. |
+| **Root Cause** | I removed `#1` globally to fix the posedge issue(bug #15) but this didn't allow enough time for combinational signals to propagate |
+| **Fix** | Just keep `#1` for non-auto-incrementing signals. |
+| **Lesson** | As long as its not auto incrementing(e.g. @posedge clk) then add some time for combination delays|
+
+---
+
+## Bug #17 - Hierarchical Write to Internal Wire (uut.zeroE)
+
+|  |  |
+| --- | --- |
+| **Symptom** | `uut.zeroE Unable to assign to unresolved wires` |
+| **Root Cause** | I tried to drive an internal wire from the testbench |
+| **Fix** | Make it a port if it needs to be or drive the components that drive the logic |
+| **Lesson** | Always test through ports, if you want a wire to hold a certain value trace out what you should set ports to cause that |
+
+---
+
+## Bug #18 - Independent Outputs Coupled in If-Else (Hazard Unit)
+
+|  |  |
+| --- | --- |
+| **Symptom** | ForwardBE from W-stage missed when M-stage condition is active |
+| **Root Cause** | I had ForwardAE and ForwardBE in one if/else chain. M-stage true → W-stage skipped entirely. (SAME BUG PATTERN AS BUG #2)|
+| **Fix** | Separate if-else chains or ternaries per output |
+| **Lesson** | If two outputs can be **INDEPENDANTLY** true they cannot share an if/else or any control structure|
+
+---
+
+## Bug #19 - StallD Goes X Due to don't care during SW instruction
+
+|  |  |
+| --- | --- |
+| **Symptom** | StallD = X when SW instruction is in Decode |
+| **Root Cause** | My SW instruction had ResultSrc be 'x but this causes StallD to be 'x as it derives its value from a comparison with ResultSrc |
+| **Fix** | Drive resultsrc to any value instead of a don't care |
+| **Lesson** | If i'm planning on using something as a control signal, consider ALL possible outputs to prevent a 'x instruction |
+---
 
 ## Patterns 
 
 ### Most Common Root Causes
-1. **Width mismatches**  — Look at the entire datapath before you update the width of something to keep track of dependencies 
-2. **always_comb semantics** — Imagine always comb to be more like an programming language with sequential execution, you'd never assign a variable with an unintialised variable and it's the same for an always comb block
-3. **Test quality**  — Write a good reliable format with justifications that is easily modifable(like tb_temple.sv)
-
+1. **Width mismatches**  - Look at the entire datapath before you update the width of something to keep track of dependencies 
+2. **always_comb semantics** - Imagine always comb to be more like an programming language with sequential execution, you'd never assign a variable with an unintialised variable and it's the same for an always comb block
+3. **Test quality**  - Write a good reliable format with justifications that is easily modifable(like tb_template.sv)
+4. **Independant output control logic** - ALWAYS have independant outputs be in its own control logic as being in the same if/else block assigns with dependancy e.g. when a is assigned b is also assigned when two signals should be blind to each other. 
+5. **Testbench timing model** — Add #1 delays for combinational delays and don't for auto incrementing delays
+6. **X propagation** — NEVER assign 'x to something to propogates to important control signals
 
 ### How i'm going to code differently 
-- **Defaults-first pattern** — prevents inferred latches and undriven signals
-- **Inline bug comments** — documented mistakes at the code site for future reference
-- **Self-checking testbenches** — pass/fail framework catches regressions immediately
-- **Waveform debugging protocol** — only open GTKWave after a test fails, trace from symptom to source
+- **Defaults-first pattern** - prevents inferred latches and undriven signals
+- **Trace logic** - never assign logic or specifically 'x without looking at where it propogates 
+- **Seperate control logics** ALWAYS going to have seperate control logics to prevent accidentally coupling independant outputs.
+- **Inline bug comments** - documented mistakes at the code site for future reference
+- **Self-checking testbenches** - pass/fail framework catches regressions immediately
+- **Waveform debugging protocol** - only open GTKWave after a test fails, trace from symptom to source
 ```
