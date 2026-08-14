@@ -1,9 +1,11 @@
-# RISC-V Single cycle 32I cpu
+# RISC-V Pipelined 32I CPU with hazard control
 
 Hello, welcome to my project repo!! This is my implementation of RISC-V single cycle cpu that supports the base integer ISA. This has 104 unit tests total with each module having its own testbench and verbose enough commenting to understand the reasoning behind the decisions made
 ## Architecture
 
-- Single-cycle datapath (1 instruction per clock cycle)
+- 5-stage pipeline (IF → ID → EX → MEM → WB)
+- Hazard unit: M→E / W→E forwarding, load-use stalling, branch flushing
+- Write-through register file
 - 32×32-bit register file (2 read ports, 1 write port, x0 hardwired to zero)
 - Separate instruction and data memories
 - Combinational ALU (10 operations)
@@ -26,7 +28,7 @@ Hello, welcome to my project repo!! This is my implementation of RISC-V single c
 ## Verification
 
 ### Methodology
-- 104 self-checking assertions across 7 module-level testbenches
+- 137 self-checking assertions across 10 module-level testbenches
 - Automated regression: `make test_all` with pass/fail summary
 - Directed tests for architectural corner cases
 - Integration tests: fibonacci, function call/return, full ISA exercise
@@ -46,12 +48,15 @@ Hello, welcome to my project repo!! This is my implementation of RISC-V single c
 | Module | Tests | Coverage Focus |
 |--------|-------|---------------|
 | ALU | 12 | All 10 ops, signed overflow, zero flag |
-| Decoder | 45 | Every opcode tested with control signal(relevant to instruction), branch taken/not-taken |
+| Decoder | 67 | Every opcode tested with control signal(relevant to instruction), branch taken/not-taken |
 | Regfile | 5 | Dual-port, x0 hardwire, write-before-read |
 | Extend | 10 | All 5 immediate types, sign extension |
 | Instr Mem | 9 | Sequential fetch, word alignment |
 | Data Mem | 2 | Write + readback |
-| CPU Top | 21 | Multi-instruction integration programs |
+| Fetch Top | 7 | PC mux select, reset, PC+4 increment |
+| Execute Top | 3 | ALU source mux, PCSrc logic |
+| Hazard Unit | 23 | Forwarding M/W priority, load-use stall, branch flush |
+| Pipeline Top | 0 | Integration via .mem programs (waveform-verified instead of testing) |
 
 ### Lessons & Design-for-Test Patterns
 - Defaults-first in `always_comb` prevents inferred latches
@@ -76,7 +81,7 @@ Running `make MODULE=(module)` runs the icarus verilog test for the (module)
 ## Roadmap
 - [x] Single-cycle CPU (full RV32I)
 - [x] 104-test regression suite
-- [ ] 5-stage pipeline + forwarding
+- [x] 5-stage pipeline + forwarding
 - [ ] UVM testbench for ALU/Decoder
 - [ ] Formal assertions (SVA) for control logic
 - [ ] FPGA synthesis + board demo
