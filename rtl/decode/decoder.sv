@@ -89,7 +89,7 @@ always_comb begin
             ImmSrc      = IMM_S;
             ALUSrc      = 1'b1;
             Memwrite    = 1'b1;
-            ResultSrc   = 'x; //don't care
+            ResultSrc   = 3'b1; //Used to be a don't care but this trips logic up with hazard unit
             Branch      = 1'b0;
             Jump        = '0;
             AluOp       = offset;
