@@ -13,6 +13,7 @@ module tb;
     logic [4:0]           RdM_out;
     logic [4:0]           RdW_out;
     logic [4:0]           RdE_out;
+    logic [1:0]           PcSrcE;
     logic                 RegWriteW_out;
     logic                 RegWriteM_out;
     logic [1:0]          ForwardAE;
@@ -20,6 +21,7 @@ module tb;
     logic                StallD;
     logic                StallF;
     logic                FlushE;
+    logic                FlushD;
 
 
     hazard_unit uut(.*); //ADD MODULE UNDER TEST HERE, if (.*) doesn't work manually instantiate like in tb_regfile.sv
@@ -136,9 +138,9 @@ module tb;
         Rs1D = 1;
         Rs2D = 1;
         #20;
-        check("StallF check",   StallF,   1'b0);
-        check("StallD check",   StallD,   1'b0);
-        check("FlushE check",   FlushE,   1'b0);
+        check("StallF both matching check",   StallF,   1'b0);
+        check("StallD both matching check",   StallD,   1'b0);
+        check("FlushE both matching check",   FlushE,   1'b1);
 
         
         #20; 
@@ -147,19 +149,20 @@ module tb;
         Rs1D = 0;
         Rs2D = 1;
         #20;
-        check("StallF check",   StallF,   1'b0);
-        check("StallD check",   StallD,   1'b0);
-        check("FlushE check",   FlushE,   1'b0);
+        check("StallF 1 matching check",   StallF,   1'b0);
+        check("StallD 1 matching check",   StallD,   1'b0);
+        check("FlushE 1 matching check",   FlushE,   1'b1);
 
         #20; 
         ResultSrcE_out = 3'b001;
+        PcSrcE = 0;
         RdE_out = 1;
         Rs1D = 0;
         Rs2D = 0;
         #20;
-        check("StallF check",   StallF,   1'b1);
-        check("StallD check",   StallD,   1'b1);
-        check("FlushE check",   FlushE,   1'b1);
+        check("StallF None matching check",   StallF,   1'b1);
+        check("StallD None matching check",   StallD,   1'b1);
+        check("FlushE None matching check",   FlushE,   1'b0);
 
         #20; 
         ResultSrcE_out = 3'b010;
@@ -167,9 +170,27 @@ module tb;
         Rs1D = 1;
         Rs2D = 1;
         #20;
+        check("StallF Wrong ResultSrcE_out check",   StallF,   1'b1);
+        check("StallD Wrong ResultSrcE_out check",   StallD,   1'b1);
+        check("FlushE Wrong ResultSrcE_out check",   FlushE,   1'b0);
+
+        /*
+        Let's check our FlushD logic, we drive our inputs
+        such that stallf is high so !stallf is low and 
+        flushD is high to test the 'or' logic and flushD
+        */
+
+        #20; 
+        ResultSrcE_out = 3'b010;
+        RdE_out = 1;
+        Rs1D = 1;
+        Rs2D = 1;
+        PcSrcE = 2'b01;
+        #20;
         check("StallF check",   StallF,   1'b1);
         check("StallD check",   StallD,   1'b1);
         check("FlushE check",   FlushE,   1'b1);
+        check("FlushD check",   FlushD,   1'b1);
 
         
 

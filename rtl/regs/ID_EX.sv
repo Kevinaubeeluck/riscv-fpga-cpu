@@ -1,6 +1,6 @@
 module ID_EX(
     input logic            clk,
-    input logic            en,
+    input logic            clr,
     input logic            RegWriteD,
     input logic            ALUSrcD,
     input logic [3:0]      ALUControlD,
@@ -36,25 +36,7 @@ module ID_EX(
 );
     
 always_ff @(posedge clk) begin
-    if(en) begin
-        RegWriteE_in <= RegWriteD;
-        ALUSrcE <= ALUSrcD;
-        ALUControlE <= ALUControlD;
-        MemwriteE_in <= MemwriteD;
-        ResultSrcE_in <= ResultSrcD;
-        ImmExtE_in <= ImmExtD;
-        RdE_in <= RdD;
-        Rd1E <= Rd1D;
-        PcE_in <= PcD_out;
-        BranchE <= BranchD;
-        JumpE <= JumpD;
-        Rd2E <= Rd2D;
-        PcPlus4E_in <= PcPlus4D_out;
-        eq_checkE <= eq_checkD;   
-        Rs1E <= Rs1D;
-        Rs2E <= Rs2D;
-    end
-    else begin
+    if(clr) begin
         RegWriteE_in <= '0;
         ALUSrcE <= '0;
         ALUControlE <= '0;
@@ -71,6 +53,24 @@ always_ff @(posedge clk) begin
         eq_checkE <= '0;
         Rs1E <= '0;
         Rs2E <= '0;
+    end
+    else begin
+        RegWriteE_in <= RegWriteD;
+        ALUSrcE <= ALUSrcD;
+        ALUControlE <= ALUControlD;
+        MemwriteE_in <= MemwriteD;
+        ResultSrcE_in <= ResultSrcD;
+        ImmExtE_in <= ImmExtD;
+        RdE_in <= RdD;
+        Rd1E <= Rd1D;
+        PcE_in <= PcD_out;
+        BranchE <= BranchD;
+        JumpE <= JumpD;
+        Rd2E <= Rd2D;
+        PcPlus4E_in <= PcPlus4D_out;
+        eq_checkE <= eq_checkD;   
+        Rs1E <= Rs1D;
+        Rs2E <= Rs2D;
     end
 end
 

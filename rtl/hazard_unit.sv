@@ -7,13 +7,15 @@ module hazard_unit(
     input logic [4:0]           RdM_out,
     input logic [4:0]           RdW_out,
     input logic [4:0]           RdE_out,
+    input logic [1:0]           PcSrcE,
     input logic                 RegWriteW_out,
     input logic                 RegWriteM_out,
     output logic [1:0]          ForwardAE,
     output logic [1:0]          ForwardBE,
     output logic                StallD,
     output logic                StallF,
-    output logic                FlushE
+    output logic                FlushE,
+    output logic                FlushD
 );
     
 
@@ -52,7 +54,9 @@ always_comb begin
     //active low makes more sense if used as en
     StallF = !((ResultSrcE_out == 3'b001) && ((RdE_out == Rs1D)||(RdE_out == Rs2D)));
     StallD = StallF;
-    FlushE = StallF;
+    //Active high for flushes
+    FlushD = (PcSrcE != 2'b00) ? (1'b1):(1'b0);
+    FlushE = !StallF || FlushD;
 
 end
 
