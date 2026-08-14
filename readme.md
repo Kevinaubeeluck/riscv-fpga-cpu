@@ -1,6 +1,51 @@
 # RISC-V Pipelined 32I CPU with hazard control
 
-Hello, welcome to my project repo!! This is my implementation of RISC-V single cycle cpu that supports the base integer ISA. This has 104 unit tests total with each module having its own testbench and verbose enough commenting to understand the reasoning behind the decisions made
+>  **[Full Verification Log — 19 bugs with root-cause analysis](VERIFICATION_LOG.md)**
+
+Most student CPU projects neglect verification and the actual testing of hardware but my aim with this project was to make that the central focus. Overall, i have 137 self-checking tests with 19 bugs found with root causes documented for each. The CPU itself is a pipelined RV32I cpu with hazard control supporting the base ISA. 
+
+## Verification
+
+### Methodology
+- 137 self-checking assertions across 10 module-level testbenches
+- Automated regression: `make test_all` with pass/fail summary
+- Directed tests that aimed to stress logic(e.g. write to reg x0, simultaneous RAW hazards etc.)
+- Integration tests: fibonacci, function call/return, full ISA exercise
+
+### Bugs Caught (Highlights)
+| Bug | Root Cause | Detection |
+|-----|-----------|-----------|
+| rd1 always 0 | Independent ports coupled in if/else → latch | Unit test |
+| J-type imm doubled | Extra shift on top of implicit LSB=0 | Integration test |
+| AluOp='x poisons block | X on case select destabilises entire always_comb | Unit test |
+| ResultSrc truncated | TB wire 2-bit, decoder output 3-bit, .* silent | Unit test |
+| ForwardBE missed| Same coupling pattern in hazard unit (3rd time)| Reasoning before sim|
+| StallD = X| Don't-care on control signal poisons stall logic| Waveform trace|
+| TB timing race | #1 delay causes extra PC increment in pipeline | Unit test|
+
+> Full verification log with 19 bugs, root causes, and analysis:
+> [VERIFICATION_LOG.md](VERIFICATION_LOG.md)
+
+### Lessons & Design-for-Test Patterns(highlights)
+- Defaults-first in `always_comb` prevents inferred latches
+- Never use 'x on signals feeding case selects in simulation
+- Independent outputs must not share if/else chains
+- Documented inline as comments at bug sites for future reference
+
+### Testing Architecture
+| Module | Tests | What is tested |
+|--------|-------|---------------|
+| ALU | 12 | All 10 ops, signed overflow, zero flag |
+| Decoder | 67 | Every opcode tested with control signal(relevant to instruction), branch taken/not-taken |
+| Regfile | 5 | Dual-port, x0 hardwire, write-before-read |
+| Extend | 10 | All 5 immediate types, sign extension |
+| Instr Mem | 9 | Sequential fetch, word alignment |
+| Data Mem | 2 | Write + readback |
+| Fetch Top | 7 | PC mux select, reset, PC+4 increment |
+| Execute Top | 3 | ALU source mux, PCSrc logic |
+| Hazard Unit | 23 | Forwarding M/W priority, load-use stall, branch flush |
+| Pipeline Top | 0 | Integration via .mem programs (waveform-verified instead of testing) |
+
 ## Architecture
 
 - 5-stage pipeline (IF → ID → EX → MEM → WB)
@@ -25,44 +70,7 @@ Hello, welcome to my project repo!! This is my implementation of RISC-V single c
 | U-type | LUI, AUIPC |
 | J-type | JAL |
 
-## Verification
 
-### Methodology
-- 137 self-checking assertions across 10 module-level testbenches
-- Automated regression: `make test_all` with pass/fail summary
-- Directed tests for architectural corner cases
-- Integration tests: fibonacci, function call/return, full ISA exercise
-
-### Bugs Caught (Highlights)
-| Bug | Root Cause | Detection |
-|-----|-----------|-----------|
-| rd1 always 0 | Independent ports coupled in if/else → latch | Unit test |
-| J-type imm doubled | Extra shift on top of implicit LSB=0 | Integration test |
-| AluOp='x poisons block | X on case select destabilises entire always_comb | Unit test |
-| ResultSrc truncated | TB wire 2-bit, decoder output 3-bit, .* silent | Unit test |
-
-> Full verification log with 14 bugs, root causes, and analysis:
-> [VERIFICATION_LOG.md](VERIFICATION_LOG.md)
-
-### Testing Architecture
-| Module | Tests | Coverage Focus |
-|--------|-------|---------------|
-| ALU | 12 | All 10 ops, signed overflow, zero flag |
-| Decoder | 67 | Every opcode tested with control signal(relevant to instruction), branch taken/not-taken |
-| Regfile | 5 | Dual-port, x0 hardwire, write-before-read |
-| Extend | 10 | All 5 immediate types, sign extension |
-| Instr Mem | 9 | Sequential fetch, word alignment |
-| Data Mem | 2 | Write + readback |
-| Fetch Top | 7 | PC mux select, reset, PC+4 increment |
-| Execute Top | 3 | ALU source mux, PCSrc logic |
-| Hazard Unit | 23 | Forwarding M/W priority, load-use stall, branch flush |
-| Pipeline Top | 0 | Integration via .mem programs (waveform-verified instead of testing) |
-
-### Lessons & Design-for-Test Patterns
-- Defaults-first in `always_comb` prevents inferred latches
-- Never use 'x on signals feeding case selects in simulation
-- Independent outputs must not share if/else chains
-- Documented inline as comments at bug sites for future reference
 
 ## Build & Run
 
